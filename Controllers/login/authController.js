@@ -1,23 +1,37 @@
 
 const { getTenantDB } = require("../../DB/connectTenantDB");
 const { generateJWT } = require("../../Middleware/jwtMiddleware");
-const { getLoginUser } = require("../../Repositories/login/authRepo");
+const { getCompany, getUserByEmail } = require("../../Repositories/login/authRepo");
 
 async function login(req, res) {
     try {
         const { email, company_code, password } = req.body;
 
-        const user = await getLoginUser(email, company_code);
-
-        if (!user) {
-            return res.status(401).json({
+        const company = await getCompany(company_code);
+        if (!company) {
+            return res.status(200).json({
                 success: false,
-                message: "Invalid email or company"
+                message: "Invalid company code"
             });
         }
 
-        // if (user.password_hash !== password) {
-        //     console.log('invalid pass', user.password_hash, password);
+        const user = await getUserByEmail(email, company_code);
+        if (!user) {
+            return res.status(200).json({
+                success: false,
+                message: "Invalid email address"
+            });
+        }
+
+        if (!user.is_active) {
+            return res.status(200).json({
+                success: false,
+                message: "User account is inactive"
+            });
+        }
+
+        // const isMatch = await bcrypt.compare(password, user.password_hash);
+        // if (!isMatch) {
         //     return res.status(401).json({
         //         success: false,
         //         message: "Invalid password"
@@ -25,26 +39,21 @@ async function login(req, res) {
         // }
 
         const tenantDB = await getTenantDB(
-            user.db_name,
-            user.db_host,
-            user.db_user,
-            user.db_password
+            company.db_name,
+            company.db_host,
+            company.db_user,
+            company.db_password
         );
 
         const tokenPayload = {
             user_id: user.user_id,
             user_code: user.user_code,
-            username: user.username,
             email: user.email,
-
-            company_id: user.company_id,
-            company_code: user.company_code,
-            company_name: user.company_name,
-
             role_code: user.role_code,
             role_name: user.role_name,
-
-            db_name: user.db_name
+            company_code: company.company_code,
+            company_name: company.company_name,
+            db_name: company.db_name
         };
 
         const token = generateJWT(tokenPayload);
@@ -55,14 +64,12 @@ async function login(req, res) {
             token,
             user: {
                 user_code: user.user_code,
-                username: user.username,
                 email: user.email,
                 role_name: user.role_name
             },
             company: {
-                company_name: user.company_name,
-                company_code: user.company_code,
-                database: user.db_name
+                company_name: company.company_name,
+                company_code: company.company_code,
             }
         });
 

@@ -8,6 +8,11 @@ async function connectTenantDB(host, user, pass, dbName) {
         password: pass,
         server: host,
         database: dbName,
+        pool: {
+            max: 10,
+            min: 0,
+            idleTimeoutMillis: 30000
+        },
         options: {
             encrypt: false,
             trustServerCertificate: true
@@ -15,11 +20,11 @@ async function connectTenantDB(host, user, pass, dbName) {
     }
 
     try {
-        let pool = await new sql.ConnectionPool(config).connect()
-        console.log(` Connected to DB: ${dbName} 😂❤️`)
+        const pool = await new sql.ConnectionPool(config).connect()
+        console.log(`✅ Connected to DB: ${dbName}`)
         return pool
     } catch (err) {
-        console.log(` Error connecting tenant DB 😭🥲 (${dbName}):`, err)
+        console.error(`❌ Error connecting DB (${dbName}):`, err)
         throw err
     }
 }
