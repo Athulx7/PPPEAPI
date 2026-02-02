@@ -65,7 +65,8 @@ async function login(req, res) {
             user: {
                 user_code: user.user_code,
                 email: user.email,
-                role_name: user.role_name
+                role_name: user.role_name,
+                role_code: user.role_code
             },
             company: {
                 company_name: company.company_name,

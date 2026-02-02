@@ -4,8 +4,6 @@ async function MenuitemsController(req, res) {
     try {
         const result = await getSideMenu(req)
 
-        console.log("MenuitemsController result:", result)
-
         return res.status(200).json({
             success: true,
             message: "success",
@@ -25,7 +23,6 @@ async function getSystemRolesController(req, res) {
     try {
         const result = await getSystemRoles(req)
 
-        console.log("getSystemRoles result:", result)
         return res.status(200).json({
             success: true,
             message: "success",

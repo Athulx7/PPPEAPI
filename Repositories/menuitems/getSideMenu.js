@@ -2,10 +2,8 @@ const  sql  = require("mssql");
 
 async function getSideMenu(req) {
     const { role_code } = req.user;
-    console.log("getSideMenu role_code:", role_code);
 
     const request = req.tenantDB.request();
-    console.log("getSideMenu request created",request);
     request.input("role_code", sql.VarChar, role_code);
 
     const result = await request.query(`
@@ -23,10 +21,8 @@ async function getSideMenu(req) {
           AND sm.is_side_menu = 1
           AND sm.is_active = 1
           AND mm.is_active = 1
-        ORDER BY mm.display_order, sm.display_order;
+        ORDER BY sm.display_order ,mm.display_order;
     `);
-
-    console.log("getSideMenu result:", result.recordset);
 
     return result.recordset;
 }
