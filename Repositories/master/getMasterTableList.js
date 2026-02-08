@@ -1,14 +1,11 @@
 const sql = require("mssql");
 
 async function getMasterTableList(req) {
-    const { menuid } = req.params;
+    const { menuid } = req.params
 
-    const request = req.tenantDB.request();
-    request.input("menuid", sql.Int, menuid);
+    const request = req.tenantDB.request()
+    request.input("menuid", sql.Int, menuid)
 
-    /* ---------------------------------
-       1. Master Header
-    ---------------------------------- */
     const headerResult = await request.query(`
         SELECT 
             id,
@@ -28,9 +25,6 @@ async function getMasterTableList(req) {
 
     const master = headerResult.recordset[0];
 
-    /* ---------------------------------
-       2. Master Fields (list columns)
-    ---------------------------------- */
     const fieldsRequest = req.tenantDB.request();
     fieldsRequest.input("master_id", sql.Int, master.id);
 
@@ -48,18 +42,12 @@ async function getMasterTableList(req) {
         ORDER BY priority
     `);
 
-    /* ---------------------------------
-       3. Master Table Data
-    ---------------------------------- */
     const dataResult = await req.tenantDB.request().query(`
         SELECT *
         FROM ${master.table_name}
         ORDER BY id DESC
     `);
 
-    /* ---------------------------------
-       4. Final Response
-    ---------------------------------- */
     return {
         master: {
             menu_id: master.menu_id,

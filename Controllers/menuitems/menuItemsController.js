@@ -1,3 +1,5 @@
+const { getMainMenuData } = require("../../Repositories/menuitems/getMainMenuData");
+const { getSearchMenu } = require("../../Repositories/menuitems/getSearchMenu");
 const { getSideMenu, getSystemRoles } = require("../../Repositories/menuitems/getSideMenu")
 
 async function MenuitemsController(req, res) {
@@ -39,4 +41,40 @@ async function getSystemRolesController(req, res) {
     }
 }
 
-module.exports = { MenuitemsController, getSystemRolesController }
+async function getMainMenuDataController(req, res) {
+    try {
+        const result = await getMainMenuData(req)
+        return res.status(200).json({
+            success: true,
+            message: "success",
+            data: result,
+        })
+    }
+    catch (err) {
+        console.log("error in getting main menus", err)
+        return res.status(500).json({
+            success: false,
+            message: 'faild to get maian menus'
+        })
+    }
+}
+
+async function getSearchMenuController (req,res) {
+    try{
+        const result = await getSearchMenu(req)
+        return res.status(200).json({
+            success : true,
+            message : "success",
+            data : result
+        })
+    }
+    catch(err){
+        console.log("error in getting search result",err)
+        return res.status(500).json({
+            success : false,
+            message : "faild to get search data"
+        })
+    }
+}
+
+module.exports = { MenuitemsController, getSystemRolesController, getMainMenuDataController,getSearchMenuController }
