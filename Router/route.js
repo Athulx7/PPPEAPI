@@ -17,4 +17,21 @@ router.get("/api/master/:menuid/:id", tenantResolver, require("../Controllers/ma
 router.get('/api/master/:menuid/dropdown/:column', tenantResolver, require('../Controllers/master/masterController').getDropdonwDataController)
 router.post('/api/master/:menuid/save', tenantResolver, require('../Controllers/master/masterController').saveMasterController)
 
+//comapay settings
+router.post('/api/savecomapnyinfo', tenantResolver, require('../Controllers/companysettingsCotroller').saveUpdaetCOmpanySettingsController)
+router.get('/api/getcompanyinfo',tenantResolver, require('../Controllers/companysettingsCotroller').getcompanyinfoCOntrller)
+
+//employee mst
+router.get('/api/empmst/getcontrols', tenantResolver, require('../Controllers/employeeMasterController').getEMpMasterCntrlsController)
+router.get('/api/empmst/getempmstdropdowndata/:column', tenantResolver, require('../Controllers/employeeMasterController').getEmpMstDropdwonDataController)
+
+
+
+
+
+
+
+
+
+
 module.exports = router;
