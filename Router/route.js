@@ -16,15 +16,23 @@ router.get('/api/master/:menuid/getcontents', tenantResolver, require('../Contro
 router.get("/api/master/:menuid/:id", tenantResolver, require("../Controllers/master/masterController").getMasterDataByIDController);
 router.get('/api/master/:menuid/dropdown/:column', tenantResolver, require('../Controllers/master/masterController').getDropdonwDataController)
 router.post('/api/master/:menuid/save', tenantResolver, require('../Controllers/master/masterController').saveMasterController)
+//end
 
 //comapay settings
 router.post('/api/savecomapnyinfo', tenantResolver, require('../Controllers/companysettingsCotroller').saveUpdaetCOmpanySettingsController)
 router.get('/api/getcompanyinfo',tenantResolver, require('../Controllers/companysettingsCotroller').getcompanyinfoCOntrller)
+//end
 
 //employee mst
 router.get('/api/empmst/getcontrols', tenantResolver, require('../Controllers/employeeMasterController').getEMpMasterCntrlsController)
 router.get('/api/empmst/getempmstdropdowndata/:column', tenantResolver, require('../Controllers/employeeMasterController').getEmpMstDropdwonDataController)
-
+router.post('/api/empmst/saveempmaster',tenantResolver, require('../Controllers/employeeMasterController').saveEmpmasterController)
+router.get('/api/empmst/departmentsList', tenantResolver, require('../Controllers/employeeMasterController').getDepartmentForEMpListController)
+router.get('/api/empmst/designantionList', tenantResolver, require('../Controllers/employeeMasterController').getDesignationForEMpListController)
+router.get('/api/empmst/hierarchyLevel', tenantResolver,  require('../Controllers/employeeMasterController').gethierarchyLevelForEMpListController)
+router.get('/api/empmst/employeeList', tenantResolver, require('../Controllers/employeeMasterController').getEmployeeListController)
+router.get("/api/empmst/getemployee/:id", tenantResolver, require('../Controllers/employeeMasterController').getEmployeeByIDController)
+router.put("/api/empmst/updateempmaster/:id", tenantResolver, require('../Controllers/employeeMasterController').UpdateEMpMstController)
 
 
 

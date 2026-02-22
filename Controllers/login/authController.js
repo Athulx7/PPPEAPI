@@ -2,6 +2,8 @@
 const { getTenantDB } = require("../../DB/connectTenantDB");
 const { generateJWT } = require("../../Middleware/jwtMiddleware");
 const { getCompany, getUserByEmail } = require("../../Repositories/login/authRepo");
+const sql = require("mssql");
+const bcrypt = require("bcrypt");
 
 async function login(req, res) {
     try {
@@ -30,13 +32,13 @@ async function login(req, res) {
             });
         }
 
-        // const isMatch = await bcrypt.compare(password, user.password_hash);
-        // if (!isMatch) {
-        //     return res.status(401).json({
-        //         success: false,
-        //         message: "Invalid password"
-        //     });
-        // }
+        const isMatch = await bcrypt.compare(password, user.password_hash);
+        if (!isMatch) {
+            return res.status(200).json({
+                success: false,
+                message: "Invalid password"
+            });
+        }
 
         const tenantDB = await getTenantDB(
             company.db_name,
@@ -44,6 +46,52 @@ async function login(req, res) {
             company.db_user,
             company.db_password
         );
+
+        const tenantRequest = tenantDB.request();
+
+        const userInfoCheck = await tenantRequest
+            .input("emp_code_ui", sql.VarChar, user.user_code)
+            .query(`
+                SELECT emp_code, is_active
+                FROM tbl_user_info
+                WHERE emp_code = @emp_code_ui
+            `);
+
+        if (!userInfoCheck.recordset.length) {
+            return res.status(200).json({
+                success: false,
+                message: "Login mapping not found in company database"
+            });
+        }
+
+        if (!userInfoCheck.recordset[0].is_active) {
+            return res.status(200).json({
+                success: false,
+                message: "User login is inactive in company"
+            });
+        }
+
+        const employeeCheck = await tenantRequest
+            .input("emp_code_emp", sql.VarChar, user.user_code)
+            .query(`
+                SELECT emp_code, is_active
+                FROM tbl_employee_mst
+                WHERE emp_code = @emp_code_emp
+            `);
+
+        if (!employeeCheck.recordset.length) {
+            return res.status(200).json({
+                success: false,
+                message: "Employee record not found"
+            });
+        }
+
+        if (!employeeCheck.recordset[0].is_active) {
+            return res.status(200).json({
+                success: false,
+                message: "Employee is inactive"
+            });
+        }
 
         const tokenPayload = {
             user_id: user.user_id,

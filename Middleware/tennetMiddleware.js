@@ -12,6 +12,7 @@ async function tenantResolver(req, res, next) {
         const token = authHeader.split(" ")[1]
         const claims = validateJWT(token)
         req.user = claims;
+        req.companyCode = claims.company_code
 
         const company = await getCompany(claims.company_code)
         if (!company) {
