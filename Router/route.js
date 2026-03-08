@@ -10,6 +10,7 @@ router.get('/api/mainMenu', tenantResolver, require('../Controllers/menuitems/me
 router.get('/api/searchMenu', tenantResolver, require('../Controllers/menuitems/menuItemsController').getSearchMenuController)
 router.get('/api/systemRoles', tenantResolver, require('../Controllers/menuitems/menuItemsController').getSystemRolesController)
 
+router.get('/api/getmenubasedcontrols/:menuid', tenantResolver, require('../Controllers/master/masterController').getMenuBasedControlsController)
 // master datas 
 router.get('/api/master/:menuid/getlist', tenantResolver, require('../Controllers/master/masterController').getMasterTableLIistController)
 router.get('/api/master/:menuid/getcontents', tenantResolver, require('../Controllers/master/masterController').getMasterContentController)
@@ -33,7 +34,13 @@ router.get('/api/empmst/hierarchyLevel', tenantResolver,  require('../Controller
 router.get('/api/empmst/employeeList', tenantResolver, require('../Controllers/employeeMasterController').getEmployeeListController)
 router.get("/api/empmst/getemployee/:id", tenantResolver, require('../Controllers/employeeMasterController').getEmployeeByIDController)
 router.put("/api/empmst/updateempmaster/:id", tenantResolver, require('../Controllers/employeeMasterController').UpdateEMpMstController)
+//end
 
+//salry component
+router.post('/api/salarycomponent/save', tenantResolver, require('../Controllers/salaryComponentsController').saveSalaryComponentsController)
+router.put('/api/salarycomponent/update', tenantResolver, require('../Controllers/salaryComponentsController').updateSalaryComponentController)
+router.get('/api/salarycomponent/list', tenantResolver, require('../Controllers/salaryComponentsController').getSalaryComponentsController)
+router.delete('/api/salarycomponent/delete/:id', tenantResolver, require('../Controllers/salaryComponentsController').deleteSalaryComponentController)
 
 
 

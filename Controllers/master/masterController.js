@@ -2,6 +2,7 @@ const { getDropdownData } = require("../../Repositories/master/getDropdownData")
 const { getMasterContents } = require("../../Repositories/master/getMasterContents")
 const { getMasterById } = require("../../Repositories/master/getMasterDataById")
 const { getMasterTableList } = require("../../Repositories/master/getMasterTableList")
+const { getMenuBasedControls } = require("../../Repositories/master/getMenuBasedControls")
 const { saveMasterData } = require("../../Repositories/master/saveMasterData")
 
 async function getMasterTableLIistController(req, res) {
@@ -95,4 +96,18 @@ async function saveMasterController(req, res) {
     }
 }
 
-module.exports = { getMasterTableLIistController, getMasterContentController, getMasterDataByIDController, getDropdonwDataController, saveMasterController }
+async function getMenuBasedControlsController (req,res) {
+    try{
+        const responce = await getMenuBasedControls(req)
+        return res.status(200).json(responce)
+    }
+    catch(err){
+        console.log('error in getting the menu based controls', err)
+        return res.status(500).json({
+            success: false,
+            message: 'failed to get Menu based controls'
+        })
+    }
+}
+
+module.exports = { getMasterTableLIistController, getMasterContentController, getMasterDataByIDController, getDropdonwDataController, saveMasterController, getMenuBasedControlsController }

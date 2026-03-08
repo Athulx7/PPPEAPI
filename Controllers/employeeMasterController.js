@@ -121,6 +121,10 @@ async function getEmployeeListController(req, res) {
     }
     catch (err) {
         console.log('error in getting employee list', err)
+        return res.status(500).json({
+            success: false,
+            message: 'error in getting employee list'
+        })
     }
 }
 
@@ -135,6 +139,10 @@ async function getEmployeeByIDController(req, res) {
     }
     catch (err) {
         console.log('error in getting employee by id', err)
+        return res.status(500).json({
+            success: false,
+            message: 'error in getting employee by id'
+        })
     }
 }
 
@@ -149,6 +157,10 @@ async function UpdateEMpMstController(req, res) {
     }
     catch (err) {
         console.log('error in getting employee by id', err)
+        return res.status(500).json({
+            success: false,
+            message: 'error in updating employee master'
+        })
     }
 }
 
