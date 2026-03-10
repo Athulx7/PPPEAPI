@@ -1,16 +1,16 @@
 const sql = require("mssql")
 
 async function getDropdownData(req) {
-    const { menuid, column } = req.params
+    const { mastercode, column } = req.params
     const filters = req.query
     const db = req.tenantDB
 
     const masterRes = await db.request()
-        .input("menuid", sql.Int, menuid)
+        .input("mastercode", sql.VarChar, mastercode)
         .query(`
             SELECT id
             FROM tbl_master_header
-            WHERE menu_id = @menuid
+            WHERE master_code = @mastercode
               AND is_active = 1
         `)
 

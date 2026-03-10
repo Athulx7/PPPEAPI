@@ -1,17 +1,17 @@
 const sql = require("mssql")
 
 async function saveMasterData(req) {
-    const { menuid } = req.params
+    const { mastercode } = req.params
     const payload = req.body
     const db = req.tenantDB
 
     const headerReq = db.request()
-    headerReq.input("menuid", sql.Int, menuid)
+    headerReq.input("mastercode", sql.VarChar, mastercode)
 
     const headerRes = await headerReq.query(`
         SELECT *
         FROM tbl_master_header
-        WHERE menu_id = @menuid
+        WHERE master_code = @mastercode
           AND is_active = 1
     `)
 

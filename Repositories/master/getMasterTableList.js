@@ -1,10 +1,11 @@
 const sql = require("mssql");
 
 async function getMasterTableList(req) {
-    const { menuid } = req.params
+    const { mastercode } = req.params
+    console.log('master code',mastercode)
 
     const request = req.tenantDB.request()
-    request.input("menuid", sql.Int, menuid)
+    request.input("mastercode", sql.VarChar, mastercode)
 
     const headerResult = await request.query(`
         SELECT 
@@ -15,7 +16,7 @@ async function getMasterTableList(req) {
             header_name,
             list_title
         FROM tbl_master_header
-        WHERE menu_id = @menuid
+        WHERE master_code = @mastercode
           AND is_active = 1
     `);
 

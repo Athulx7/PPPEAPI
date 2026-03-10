@@ -10,13 +10,13 @@ router.get('/api/mainMenu', tenantResolver, require('../Controllers/menuitems/me
 router.get('/api/searchMenu', tenantResolver, require('../Controllers/menuitems/menuItemsController').getSearchMenuController)
 router.get('/api/systemRoles', tenantResolver, require('../Controllers/menuitems/menuItemsController').getSystemRolesController)
 
-router.get('/api/getmenubasedcontrols/:menuid', tenantResolver, require('../Controllers/master/masterController').getMenuBasedControlsController)
+router.get('/api/getmenubasedcontrols/:mastercode', tenantResolver, require('../Controllers/master/masterController').getMenuBasedControlsController)
 // master datas 
-router.get('/api/master/:menuid/getlist', tenantResolver, require('../Controllers/master/masterController').getMasterTableLIistController)
-router.get('/api/master/:menuid/getcontents', tenantResolver, require('../Controllers/master/masterController').getMasterContentController)
-router.get("/api/master/:menuid/:id", tenantResolver, require("../Controllers/master/masterController").getMasterDataByIDController);
-router.get('/api/master/:menuid/dropdown/:column', tenantResolver, require('../Controllers/master/masterController').getDropdonwDataController)
-router.post('/api/master/:menuid/save', tenantResolver, require('../Controllers/master/masterController').saveMasterController)
+router.get('/api/master/:mastercode/getlist', tenantResolver, require('../Controllers/master/masterController').getMasterTableLIistController)
+router.get('/api/master/:mastercode/getcontents', tenantResolver, require('../Controllers/master/masterController').getMasterContentController)
+router.get("/api/master/:mastercode/:id", tenantResolver, require("../Controllers/master/masterController").getMasterDataByIDController);
+router.get('/api/master/:mastercode/dropdown/:column', tenantResolver, require('../Controllers/master/masterController').getDropdonwDataController)
+router.post('/api/master/:mastercode/save', tenantResolver, require('../Controllers/master/masterController').saveMasterController)
 //end
 
 //comapay settings

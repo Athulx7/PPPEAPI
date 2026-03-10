@@ -1,17 +1,16 @@
 const sql = require("mssql");
 
 async function getMasterById(req) {
-    const { menuid, id } = req.params;
+    const { mastercode, id } = req.params;
     const db = req.tenantDB;
 
-    // 1️⃣ Get master header
     const headerReq = db.request();
-    headerReq.input("menuid", sql.Int, menuid);
+    headerReq.input("mastercode", sql.VarChar, mastercode);
 
     const headerRes = await headerReq.query(`
         SELECT *
         FROM tbl_master_header
-        WHERE menu_id = @menuid
+        WHERE master_code = @mastercode
           AND is_active = 1
     `);
 
@@ -22,7 +21,6 @@ async function getMasterById(req) {
     const master = headerRes.recordset[0];
     const tableName = master.table_name;
 
-    // 2️⃣ Fetch row by ID
     const dataReq = db.request();
     dataReq.input("id", sql.Int, id);
 

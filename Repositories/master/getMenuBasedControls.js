@@ -2,9 +2,23 @@ const sql = require("mssql");
 
 async function getMenuBasedControls(req) {
   const db = req.tenantDB
-  const { menuid } = req.params
+  const { mastercode } = req.params
 
-  // get controls
+  const headerRes = await db.request()
+    .input("mastercode", sql.VarChar, mastercode)
+    .query(`
+        SELECT menu_id
+        FROM tbl_master_header
+        WHERE master_code = @mastercode
+          AND is_active = 1
+    `)
+
+  if (!headerRes.recordset.length) {
+    throw new Error("Invalid master code")
+  }
+
+  const menuid = headerRes.recordset[0].menu_id
+
   const controlsRes = await db.request()
     .input("menuid", sql.Int, menuid)
     .query(`
@@ -18,7 +32,6 @@ async function getMenuBasedControls(req) {
 
   const dropdowns = {}
 
-  // collect dropdown data
   for (const control of controls) {
 
     if (control.field_type === "dropdown" && control.dropdown_source) {
