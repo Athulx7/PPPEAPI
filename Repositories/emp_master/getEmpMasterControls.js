@@ -48,8 +48,6 @@ async function getEmpMstDropdwonData(req, res) {
     const { column } = req.params
     const filters = req.query
 
-    console.log('querry', filters)
-
     const fieldRes = await db.request()
         .input("column_name", sql.VarChar, column)
         .query(`

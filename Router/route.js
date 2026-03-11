@@ -10,7 +10,7 @@ router.get('/api/mainMenu', tenantResolver, require('../Controllers/menuitems/me
 router.get('/api/searchMenu', tenantResolver, require('../Controllers/menuitems/menuItemsController').getSearchMenuController)
 router.get('/api/systemRoles', tenantResolver, require('../Controllers/menuitems/menuItemsController').getSystemRolesController)
 
-router.get('/api/getmenubasedcontrols/:mastercode', tenantResolver, require('../Controllers/master/masterController').getMenuBasedControlsController)
+router.get('/api/getmenubasedcontrols/:menuid', tenantResolver, require('../Controllers/master/masterController').getMenuBasedControlsController)
 // master datas 
 router.get('/api/master/:mastercode/getlist', tenantResolver, require('../Controllers/master/masterController').getMasterTableLIistController)
 router.get('/api/master/:mastercode/getcontents', tenantResolver, require('../Controllers/master/masterController').getMasterContentController)
