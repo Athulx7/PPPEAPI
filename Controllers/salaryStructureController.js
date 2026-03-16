@@ -1,6 +1,6 @@
-const { getSlryComponentDropdownData, getSlryComponentCalculationTypeDropdownData } = require("../Repositories/salary_structure/getComponentDropData")
+const { getSlryComponentDropdownData, getSlryComponentCalculationTypeDropdownData, getDropdownComponentType } = require("../Repositories/salary_structure/getComponentDropData")
 
-async function getComponentDropDataController(req,res) {
+async function getComponentDropDataController(req, res) {
     try {
         const data = await getSlryComponentDropdownData(req)
         return res.json({
@@ -18,7 +18,7 @@ async function getComponentDropDataController(req,res) {
     }
 }
 
-async function getComponentCalculationTypeDropDataController(req,res) {
+async function getComponentCalculationTypeDropDataController(req, res) {
     try {
         const data = await getSlryComponentCalculationTypeDropdownData(req)
         return res.json({
@@ -36,4 +36,22 @@ async function getComponentCalculationTypeDropDataController(req,res) {
     }
 }
 
-module.exports = { getComponentDropDataController, getComponentCalculationTypeDropDataController }
+async function getDropdownComponentTypeController(req, res) {
+    try {
+        const data = await getDropdownComponentType(req)
+        return res.json({
+            success: true,
+            message: "Dropdown data retrieved",
+            data: data
+        })
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).json({
+            success: false,
+            message: "Failed to retrieve dropdown data"
+        })
+    }
+}
+
+module.exports = { getComponentDropDataController, getComponentCalculationTypeDropDataController, getDropdownComponentTypeController }

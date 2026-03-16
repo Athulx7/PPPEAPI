@@ -45,6 +45,7 @@ router.delete('/api/salarycomponent/delete/:id', tenantResolver, require('../Con
 //salary Structure
 router.get('/api/salarystructure/dropdownCcomponent', tenantResolver, require('../Controllers/salaryStructureController').getComponentDropDataController)
 router.get('/api/salarystructure/dropdownCalculationtype', tenantResolver, require('../Controllers/salaryStructureController').getComponentCalculationTypeDropDataController)
+router.get('/api/salarystructure/dropdownComponentType', tenantResolver, require('../Controllers/salaryStructureController').getDropdownComponentTypeController)
 
 
 
