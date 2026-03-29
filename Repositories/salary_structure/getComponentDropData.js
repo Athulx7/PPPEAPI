@@ -32,7 +32,8 @@ async function getDropdownComponentType(req) {
     const db = req.tenantDB
     const result = await db.request().query(`SELECT
 type_code AS value,
-type_name AS label
+type_name AS label,
+payroll_impact as payrollImpact
 FROM tbl_salary_component_type
 WHERE is_active = 1`)
 
