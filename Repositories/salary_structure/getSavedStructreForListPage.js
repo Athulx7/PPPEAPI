@@ -15,7 +15,6 @@ async function getSalaryStructureList(req) {
 
     COUNT(c.id) AS component_count,
 
-    -- ✅ Check if structure is used
     CASE 
         WHEN EXISTS (
             SELECT 1 
@@ -25,7 +24,6 @@ async function getSalaryStructureList(req) {
         ELSE 0 
     END AS is_used,
 
-    -- ✅ Editable flag
     CASE 
         WHEN EXISTS (
             SELECT 1 
@@ -35,7 +33,6 @@ async function getSalaryStructureList(req) {
         ELSE 1 
     END AS is_editable,
 
-    -- ✅ Deletable flag
     CASE 
         WHEN EXISTS (
             SELECT 1 
