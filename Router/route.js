@@ -36,8 +36,7 @@ router.get("/api/empmst/getemployee/:id", tenantResolver, require('../Controller
 router.put("/api/empmst/updateempmaster/:id", tenantResolver, require('../Controllers/employeeMasterController').UpdateEMpMstController)
 //end
 
-// ================= SALARY STRUCTURE =================
-
+//SALARY STRUCTURE
 router.get('/api/salarystructure/dropdownCcomponent', tenantResolver, require('../Controllers/salaryStructureController').getComponentDropDataController)
 router.get('/api/salarystructure/dropdownCalculationtype', tenantResolver, require('../Controllers/salaryStructureController').getComponentCalculationTypeDropDataController)
 router.get('/api/salarystructure/dropdownComponentType', tenantResolver, require('../Controllers/salaryStructureController').getDropdownComponentTypeController)
@@ -45,17 +44,15 @@ router.get('/api/salarystructure/dropdownComponentType', tenantResolver, require
 router.post('/api/salarystructure/save', tenantResolver, require('../Controllers/salaryStructureController').createSalaryStructueController)
 router.get('/api/salarystructure/list', tenantResolver, require('../Controllers/salaryStructureController').getSavedStructuresListController)
 
-// ================= SALARY ASSIGNMENT =================
-
 router.get('/api/salarystructure/assignmentDropdowns', tenantResolver, require('../Controllers/salaryAssignmentController').getAssignmentDropdownsController)
 router.get('/api/salarystructure/getassignments', tenantResolver, require('../Controllers/salaryAssignmentController').getAllAssignmentsController)
 router.post('/api/salarystructure/saveassign', tenantResolver, require('../Controllers/salaryAssignmentController').createAssignmentController)
 
-
-// ================= DYNAMIC ROUTES LAST =================
-
 router.put('/api/salarystructure/:id', tenantResolver, require('../Controllers/salaryStructureController').updateSalaryStructureController)
 router.get('/api/salarystructure/:id', tenantResolver, require('../Controllers/salaryStructureController').getSalaryStructureByIdController)
+router.get('/api/salarystructure/assignment/:id', tenantResolver, require('../Controllers/salaryAssignmentController').getAssignmentByIdController)
+router.put('/api/salarystructure/assignment/:id',tenantResolver, require('../Controllers/salaryAssignmentController').updateSalaryAssignmentController)
+//end
 
 //chat
 router.get('/api/chat/employees', tenantResolver, require('../Controllers/chatController').getFullemplopyeeDataController)

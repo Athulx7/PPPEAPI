@@ -4,20 +4,26 @@ async function getAssignmentDropdowns(req) {
     const [designationRes, employeeRes, structureRes] = await Promise.all([
 
         db.request().query(`
-            SELECT 
-                desig_code AS value,
-                desig_name AS label
-                
-            FROM tbl_designation_mst
-            WHERE is_active = 1
+           SELECT 
+    d.desig_code AS value,
+    d.desig_name AS label
+
+FROM tbl_designation_mst d
+
+WHERE d.is_active = 1
+
+AND NOT EXISTS (
+    SELECT 1
+    FROM tbl_salary_structure_assignment a
+    WHERE a.assignment_type = 'designation'
+      AND a.target_code = d.desig_code
+)
         `),
 
         db.request().query(`
-         SELECT 
+        SELECT 
     e.emp_code AS value,
-
     CONCAT(e.first_name, ' ', e.last_name) AS label,
-
     d.desig_name AS designation,
     dp.depart_name AS department
 
@@ -29,7 +35,21 @@ LEFT JOIN tbl_designation_mst d
 LEFT JOIN tbl_department_mst dp
     ON e.department_code = dp.depart_code
 
-WHERE e.is_active = 1;
+WHERE e.is_active = 1
+
+AND NOT EXISTS (
+    SELECT 1 
+    FROM tbl_salary_structure_assignment a
+    WHERE a.assignment_type = 'employee'
+      AND a.target_code = e.emp_code
+)
+
+AND NOT EXISTS (
+    SELECT 1 
+    FROM tbl_salary_structure_assignment a
+    WHERE a.assignment_type = 'designation'
+      AND a.target_code = e.designation_code
+)
         `),
 
         db.request().query(`

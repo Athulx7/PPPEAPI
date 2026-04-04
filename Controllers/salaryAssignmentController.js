@@ -1,4 +1,5 @@
-const { createAssignment } = require("../Repositories/salary_structure/createSalaryAssignment")
+const { createAssignment, updateSalaryAssignment } = require("../Repositories/salary_structure/createSalaryAssignment")
+const { getAssignmentById } = require("../Repositories/salary_structure/getAssignmentById")
 const { getAssignmentDropdowns } = require("../Repositories/salary_structure/getAssignmentDropdowns")
 const { getAllAssignments } = require("../Repositories/salary_structure/getSavedAssignment")
 
@@ -53,4 +54,41 @@ async function getAllAssignmentsController(req, res) {
     }
 }
 
-module.exports = { getAssignmentDropdownsController, createAssignmentController, getAllAssignmentsController }
+async function getAssignmentByIdController(req, res) {
+    try {
+        const data = await getAssignmentById(req)
+
+        return res.json({
+            success: true,
+            data
+        })
+    } catch (err) {
+        console.error(err)
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch assignment"
+        })
+    }
+}
+
+async function updateSalaryAssignmentController(req, res) {
+    try {
+        const data = await updateSalaryAssignment(req)
+
+        return res.json({
+            success: true,
+            message: "Assignment updated successfully",
+            data
+        })
+
+    } catch (err) {
+        console.error("Update Assignment Error:", err)
+
+        return res.status(500).json({
+            success: false,
+            message: err.message || "Failed to update assignment"
+        })
+    }
+}
+
+module.exports = { getAssignmentDropdownsController, createAssignmentController, getAllAssignmentsController, getAssignmentByIdController, getAssignmentByIdController, updateSalaryAssignmentController }

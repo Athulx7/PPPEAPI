@@ -2,14 +2,12 @@
 function calculateSalary(components = []) {
     const values = {}
 
-    // ── FIXED ───────────────────────────────
     components.forEach(c => {
         if (!c.formula_expression && !c.percentage_value) {
             values[c.component_code] = parseFloat(c.fixed_amount) || 0
         }
     })
 
-    // ── PERCENTAGE ──────────────────────────
     components.forEach(c => {
         if (c.percentage_value && c.base_component_code) {
             const base = values[c.base_component_code] || 0
@@ -18,7 +16,6 @@ function calculateSalary(components = []) {
         }
     })
 
-    // ── FORMULA ─────────────────────────────
     components.forEach(c => {
         if (c.formula_expression) {
             let formula = c.formula_expression
@@ -38,7 +35,6 @@ function calculateSalary(components = []) {
         }
     })
 
-    // ── BREAKDOWN ───────────────────────────
     let add = 0, sub = 0, employer = 0
 
     components.forEach(c => {
@@ -90,7 +86,6 @@ async function getAllAssignments(req) {
 
             d.desig_name AS designation_name,
 
-            -- 🔥 Components JSON
             (
                 SELECT 
                     c.component_name,
@@ -112,7 +107,6 @@ async function getAllAssignments(req) {
                 FOR JSON PATH
             ) AS components,
 
-            -- 🔥 Employees under designation
             (
                 SELECT 
                     e2.emp_code,
@@ -127,8 +121,32 @@ async function getAllAssignments(req) {
                 WHERE 
                     a.assignment_type = 'designation'
                     AND e2.designation_code = a.target_code
+                    AND NOT EXISTS (
+                        SELECT 1 
+                        FROM tbl_salary_structure_assignment a2
+                        WHERE 
+                            a2.assignment_type = 'employee'
+                            AND a2.target_code = e2.emp_code
+                            AND a2.status = 1
+                    )
                 FOR JSON PATH
-            ) AS mapped_employees
+            ) AS mapped_employees,
+
+            (
+                SELECT COUNT(*)
+                FROM tbl_employee_mst e3
+                WHERE 
+                    a.assignment_type = 'designation'
+                    AND e3.designation_code = a.target_code
+                    AND EXISTS (
+                        SELECT 1 
+                        FROM tbl_salary_structure_assignment a3
+                        WHERE 
+                            a3.assignment_type = 'employee'
+                            AND a3.target_code = e3.emp_code
+                            AND a3.status = 1
+                    )
+            ) AS individually_overridden_count
 
         FROM tbl_salary_structure_assignment a
 
@@ -152,7 +170,6 @@ async function getAllAssignments(req) {
         ORDER BY a.created_at DESC
     `)
 
-    // 🔥 PROCESS DATA
     const finalData = result.recordset.map(row => {
         let components = []
         let employees = []
@@ -169,15 +186,14 @@ async function getAllAssignments(req) {
             employees = []
         }
 
-        // 🔥 CALCULATE SALARY
         const salary = calculateSalary(components)
 
         return {
             ...row,
             components,
             mapped_employees: employees,
+            individually_overridden_count: row.individually_overridden_count || 0,
 
-            // 🔥 salary data
             salary_values: salary.values,
             net_salary: salary.net,
             salary_breakdown: salary.breakdown

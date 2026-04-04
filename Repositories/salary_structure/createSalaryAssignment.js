@@ -79,4 +79,115 @@ async function createAssignment(req) {
     }
 }
 
-module.exports = { createAssignment }
+async function updateSalaryAssignment(req) {
+    const db = req.tenantDB
+    const { id } = req.params
+    const { user_code } = req.user
+
+    const {
+        target_code,
+        structure_id,
+        effective_date,
+        end_date,
+        reason,
+        status
+    } = req.body
+
+    const transaction = db.transaction()
+
+    await transaction.begin()
+
+    try {
+        const oldRes = await transaction.request()
+            .input('id', id)
+            .query(`
+                SELECT * FROM tbl_salary_structure_assignment
+                WHERE id = @id
+            `)
+
+        if (!oldRes.recordset.length) {
+            throw new Error("Assignment not found")
+        }
+
+        const old = oldRes.recordset[0]
+
+        await transaction.request()
+            .input('assignment_id', old.id)
+            .input('employee_code', target_code)
+            .input('structure_id', old.structure_id)
+            .input('effective_date', old.effective_date)
+            .input('end_date', new Date())
+            .query(`
+                INSERT INTO tbl_salary_structure_history
+                (
+                    assignment_id,
+                    employee_code,
+                    structure_id,
+                    effective_date,
+                    end_date
+                )
+                VALUES
+                (
+                    @assignment_id,
+                    @employee_code,
+                    @structure_id,
+                    @effective_date,
+                    @end_date
+                )
+            `)
+
+        await transaction.request()
+            .input('id', id)
+            .query(`
+                UPDATE tbl_salary_structure_assignment
+                SET status = 0,
+                    end_date = GETDATE()
+                WHERE id = @id
+            `)
+
+        await transaction.request()
+            .input('assignment_type', 'employee')
+            .input('target_code', target_code)
+            .input('structure_id', structure_id)
+            .input('effective_date', effective_date)
+            .input('end_date', end_date)
+            .input('reason', reason)
+            .input('status', status)
+            .input('assigned_by', user_code)
+            .query(`
+                INSERT INTO tbl_salary_structure_assignment
+                (
+                    assignment_type,
+                    target_code,
+                    structure_id,
+                    effective_date,
+                    end_date,
+                    reason,
+                    status,
+                    assigned_by
+                )
+                VALUES
+                (
+                    @assignment_type,
+                    @target_code,
+                    @structure_id,
+                    @effective_date,
+                    @end_date,
+                    @reason,
+                    @status,
+                    @assigned_by
+                )
+            `)
+
+        await transaction.commit()
+
+        return { success: true }
+
+    } catch (err) {
+        await transaction.rollback()
+        throw err
+    }
+}
+
+
+module.exports = { createAssignment, updateSalaryAssignment }
