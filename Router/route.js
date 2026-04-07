@@ -2,6 +2,17 @@ const express = require('express');
 const router = express.Router();
 
 const tenantResolver = require('../Middleware/tennetMiddleware').tenantResolver;
+const {
+    getUploadMastersController,
+    downloadTemplateController,
+    uploadFileController,
+    getBatchStatusController,
+    getBatchErrorsController,
+    getUploadHistoryController,
+    getUploadTypesController,
+    uploadMiddleware,
+    getBatchRecordsController
+} = require('../Controllers/uploadData/dataUploadController')
 
 router.post('/api/login', require('../Controllers/login/authController').login)
 
@@ -52,6 +63,17 @@ router.put('/api/salarystructure/:id', tenantResolver, require('../Controllers/s
 router.get('/api/salarystructure/:id', tenantResolver, require('../Controllers/salaryStructureController').getSalaryStructureByIdController)
 router.get('/api/salarystructure/assignment/:id', tenantResolver, require('../Controllers/salaryAssignmentController').getAssignmentByIdController)
 router.put('/api/salarystructure/assignment/:id',tenantResolver, require('../Controllers/salaryAssignmentController').updateSalaryAssignmentController)
+//end
+
+//upload data
+router.get( '/api/upload/masters',               tenantResolver, getUploadMastersController)
+router.get( '/api/upload/template/:uploadCode',  tenantResolver, downloadTemplateController)
+router.post('/api/upload/file',                  tenantResolver, uploadMiddleware, uploadFileController)
+router.get( '/api/upload/batch/:batchId',        tenantResolver, getBatchStatusController)
+router.get( '/api/upload/batch/:batchId/errors', tenantResolver, getBatchErrorsController)
+router.get('/api/upload/batch/:batchId/records',tenantResolver,getBatchRecordsController)
+router.get( '/api/upload/history',               tenantResolver, getUploadHistoryController)   // ✅
+router.get( '/api/upload/history/types',         tenantResolver, getUploadTypesController)     // ✅
 //end
 
 //chat
