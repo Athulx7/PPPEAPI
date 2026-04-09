@@ -40,6 +40,4 @@ WHERE is_active = 1`)
     return result.recordset
 }
 
-// salarystructure/dropdownComponentType
-
 module.exports = { getSlryComponentDropdownData, getSlryComponentCalculationTypeDropdownData, getDropdownComponentType }

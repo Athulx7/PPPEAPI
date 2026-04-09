@@ -30,7 +30,6 @@ async function getUploadTemplateData(req, uploadCode) {
 
     const master = masterResult.recordset[0]
 
-    // ✅ JOIN with tbl_master_fields to get code_prefix, code_length directly
     const fieldsResult = await db.request()
         .input('uploadId', sql.Int, master.upload_id)
         .query(`
@@ -70,7 +69,6 @@ async function processUploadRows(req, { batchId, rows, fields, tableName }) {
     let success = 0
     let errorCount = 0
 
-    // ✅ Step 1 — Cache dropdown valid values before loop
     const dropdownCache = {}
     for (const field of fields.filter(f => f.field_type === 'dropdown' && f.dropdown_source)) {
         try {
@@ -83,10 +81,8 @@ async function processUploadRows(req, { batchId, rows, fields, tableName }) {
         }
     }
 
-    // ✅ Step 2 — Pre-load auto code starting numbers from actual target table
-    // Uses code_prefix and code_length from tbl_master_fields (joined in getUploadTemplateData)
-    const autoCodeCounters = {}  // { column_name: currentNumber }
-    const autoCodeConfigs = {}  // { column_name: { prefix, length } }
+    const autoCodeCounters = {}
+    const autoCodeConfigs = {}
 
     for (const field of fields.filter(f => f.is_auto_code)) {
         const prefix = field.code_prefix || ''
@@ -95,7 +91,6 @@ async function processUploadRows(req, { batchId, rows, fields, tableName }) {
         autoCodeConfigs[field.column_name] = { prefix, codeLength }
 
         try {
-            // ✅ Get latest code from the ACTUAL target table dynamically
             const lastResult = await db.request().query(`
                 SELECT TOP 1 ${field.column_name}
                 FROM ${tableName}
@@ -108,14 +103,13 @@ async function processUploadRows(req, { batchId, rows, fields, tableName }) {
                 const numPart = lastCode.replace(prefix, '').trim()
                 autoCodeCounters[field.column_name] = parseInt(numPart) || 0
             } else {
-                autoCodeCounters[field.column_name] = 0 // empty table, start from 001
+                autoCodeCounters[field.column_name] = 0
             }
         } catch (e) {
             autoCodeCounters[field.column_name] = 0
         }
     }
 
-    // ✅ Step 3 — Process each row
     for (let i = 0; i < rows.length; i++) {
         const row = rows[i]
         const rowErrors = []
@@ -123,7 +117,6 @@ async function processUploadRows(req, { batchId, rows, fields, tableName }) {
 
         for (const field of fields) {
 
-            // ✅ AUTO CODE — increment in memory, no DB call per row
             if (field.is_auto_code) {
                 const { prefix, codeLength } = autoCodeConfigs[field.column_name]
                 autoCodeCounters[field.column_name] += 1
@@ -131,19 +124,16 @@ async function processUploadRows(req, { batchId, rows, fields, tableName }) {
                 continue
             }
 
-            // ✅ HIDDEN with default (like is_active)
             if (field.is_hidden) {
                 insertData[field.column_name] = field.default_value ?? 1
                 continue
             }
 
-            // Safe header key matching
             const headerKey = Object.keys(row).find(
                 k => k.trim().replace(' *', '') === field.excel_header.trim().replace(' *', '')
             )
             const value = headerKey ? String(row[headerKey]).trim() : ''
 
-            // Required check
             if (field.is_required && !value) {
                 rowErrors.push({
                     column_name: field.column_name,
@@ -155,7 +145,6 @@ async function processUploadRows(req, { batchId, rows, fields, tableName }) {
                 continue
             }
 
-            // Regex check
             if (value && field.validation_regex) {
                 const regex = new RegExp(field.validation_regex)
                 if (!regex.test(value)) {
@@ -170,7 +159,6 @@ async function processUploadRows(req, { batchId, rows, fields, tableName }) {
                 }
             }
 
-            // Dropdown validation from cache
             if (field.field_type === 'dropdown' && value) {
                 const valid = dropdownCache[field.column_name] || []
                 if (valid.length && !valid.includes(value.toLowerCase().trim())) {
@@ -185,7 +173,6 @@ async function processUploadRows(req, { batchId, rows, fields, tableName }) {
                 }
             }
 
-            // Toggle normalize
             if (field.field_type === 'toggle') {
                 insertData[field.column_name] = ['1', 'true', 'yes', 'active'].includes(
                     value.toLowerCase()
@@ -195,11 +182,9 @@ async function processUploadRows(req, { batchId, rows, fields, tableName }) {
             }
         }
 
-        // ---- Row has errors ----
         if (rowErrors.length > 0) {
             errorCount++
 
-            // ✅ Roll back auto code counter — this row won't be inserted
             for (const field of fields.filter(f => f.is_auto_code)) {
                 autoCodeCounters[field.column_name] -= 1
             }
@@ -225,7 +210,6 @@ async function processUploadRows(req, { batchId, rows, fields, tableName }) {
             continue
         }
 
-        // ---- No errors — insert to target table ----
         try {
             const columns = Object.keys(insertData)
             const values = Object.values(insertData)
@@ -243,7 +227,6 @@ async function processUploadRows(req, { batchId, rows, fields, tableName }) {
         } catch (dbErr) {
             errorCount++
 
-            // ✅ DB insert failed — roll back auto code counter
             for (const field of fields.filter(f => f.is_auto_code)) {
                 autoCodeCounters[field.column_name] -= 1
             }
@@ -260,7 +243,6 @@ async function processUploadRows(req, { batchId, rows, fields, tableName }) {
                 `)
         }
 
-        // Update progress every 10 rows
         if (i % 10 === 0 || i === rows.length - 1) {
             const progress = Math.round(((i + 1) / rows.length) * 100)
             await db.request()
@@ -280,7 +262,6 @@ async function processUploadRows(req, { batchId, rows, fields, tableName }) {
         }
     }
 
-    // ✅ Final batch status
     const finalStatus = errorCount === 0 ? 'completed'
         : success === 0 ? 'failed'
             : 'partial_success'
@@ -306,7 +287,6 @@ async function processUploadRows(req, { batchId, rows, fields, tableName }) {
     return { success, errorCount, finalStatus }
 }
 
-// ✅ Batch status for progress page
 async function getBatchStatus(req, batchId) {
     const db = req.tenantDB
     const result = await db.request()
@@ -323,7 +303,6 @@ async function getBatchStatus(req, batchId) {
     return result.recordset[0] || null
 }
 
-// ✅ Errors for progress page
 async function getBatchErrors(req, batchId) {
     const db = req.tenantDB
     const result = await db.request()
@@ -340,7 +319,6 @@ async function getUploadHistory(req, filters) {
     const db = req.tenantDB
     const { uploadType, status, frmTime, toTime, search } = filters
 
-    // Build WHERE dynamically
     const conditions = []
     const request = db.request()
 
@@ -424,7 +402,7 @@ async function getBatchRecords(req, batchId) {
             ORDER BY r.row_number
         `);
 
-    return result.recordset;
+    return result.recordset
 }
 
 module.exports = {

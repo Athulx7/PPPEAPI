@@ -72,8 +72,18 @@ router.post('/api/upload/file',                  tenantResolver, uploadMiddlewar
 router.get( '/api/upload/batch/:batchId',        tenantResolver, getBatchStatusController)
 router.get( '/api/upload/batch/:batchId/errors', tenantResolver, getBatchErrorsController)
 router.get('/api/upload/batch/:batchId/records',tenantResolver,getBatchRecordsController)
-router.get( '/api/upload/history',               tenantResolver, getUploadHistoryController)   // ✅
-router.get( '/api/upload/history/types',         tenantResolver, getUploadTypesController)     // ✅
+router.get( '/api/upload/history',               tenantResolver, getUploadHistoryController)
+router.get( '/api/upload/history/types',         tenantResolver, getUploadTypesController)
+//end
+
+//module mapping
+router.get('/api/menumapping/systemroles', tenantResolver, require('../Controllers/menuMappingController').getMenuMappingSystemrolesController)
+router.get('/api/menumapping/department', tenantResolver, require('../Controllers/menuMappingController').getMenuMappingDepartmentController)
+router.get('/api/menumapping/designation', tenantResolver, require('../Controllers/menuMappingController').getMenuMappingDesignationController)
+router.get('/api/menumapping/employees', tenantResolver, require('../Controllers/menuMappingController').getMenuMappingEmployeesController)
+router.get('/api/menumapping/allSubMenus', tenantResolver, require('../Controllers/menuMappingController').getMenuMappingAllMenusController)
+router.get('/api/menumapping/load', tenantResolver, require('../Controllers/menuMappingController').getMenuMappingLoadMenu)
+router.post('/api/menumapping/save', tenantResolver, require('../Controllers/menuMappingController').SaveMenuMappingController)
 //end
 
 //chat

@@ -3,15 +3,7 @@ const sql = require("mssql")
 async function createSalaryStructure(req) {
     const db = req.tenantDB
     const { user_code } = req.user
-
-    const {
-        structureCode,
-        structureName,
-        description,
-        effectiveDate,
-        status,
-        components
-    } = req.body
+    const { structureCode, structureName, description, effectiveDate, status, components } = req.body
 
     const transaction = new sql.Transaction(db)
     await transaction.begin()
@@ -124,14 +116,7 @@ async function updateSalaryStructure(req) {
     const { user_code } = req.user
     const { id } = req.params
 
-    const {
-        structureCode,
-        structureName,
-        description,
-        effectiveDate,
-        status,
-        components
-    } = req.body
+    const { structureCode, structureName, description, effectiveDate, status, components } = req.body
 
     const transaction = db.transaction()
     await transaction.begin()

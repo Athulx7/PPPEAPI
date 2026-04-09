@@ -13,10 +13,9 @@ const {
     getBatchRecords
 } = require('../../Repositories/DataUpload/uploadRepository')
 
-// ✅ Multer config — memory only, no disk save
 const upload = multer({ 
     storage: multer.memoryStorage(),
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+    limits: { fileSize: 10 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
         const allowed = [
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -27,7 +26,6 @@ const upload = multer({
     }
 })
 
-// Export multer middleware so router can use it
 const uploadMiddleware = upload.single('file')
 
 async function getUploadMastersController(req, res) {
@@ -56,7 +54,6 @@ async function downloadTemplateController(req, res) {
         const workbook = new ExcelJS.Workbook()
         const worksheet = workbook.addWorksheet('Template')
 
-        // Header row
         const headerRow = worksheet.addRow(
             visibleFields.map(f => f.excel_header + (f.is_required ? ' *' : ''))
         )
@@ -74,7 +71,6 @@ async function downloadTemplateController(req, res) {
             width: Math.max(f.excel_header.length + 8, 22)
         }))
 
-        // Sample row
         const sampleRow = visibleFields.map(f =>
             f.field_type === 'toggle'   ? '1' :
             f.field_type === 'dropdown' ? 'see valid values' :
@@ -106,7 +102,6 @@ async function uploadFileController(req, res) {
         const { master, fields } = await getUploadTemplateData(req, uploadCode)
         if (!master) return res.status(400).json({ success: false, message: "Invalid upload master" })
 
-        // Parse Excel from buffer (NOT saved to disk)
         const workbook = XLSX.read(file.buffer, { type: 'buffer' })
         const sheet = workbook.Sheets[workbook.SheetNames[0]]
         const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' })
@@ -122,10 +117,8 @@ async function uploadFileController(req, res) {
             fileSize: file.size
         })
 
-        // ✅ Respond immediately with batchId
         res.json({ success: true, message: "Upload started", data: { batch_id: batchId, total_records: rows.length } })
 
-        // ✅ Process in background (non-blocking)
         processUploadRows(req, { batchId, rows, fields, tableName: master.table_name })
             .catch(err => console.error('Background processing error:', err))
 
@@ -172,7 +165,6 @@ async function getUploadHistoryController(req, res) {
     }
 }
 
-// ✅ Upload type options for history filter dropdown
 async function getUploadTypesController(req, res) {
     try {
         const data = await getUploadTypesForFilter(req)
@@ -208,8 +200,8 @@ module.exports = {
     uploadFileController,
     getBatchStatusController,
     getBatchErrorsController,
-    getUploadHistoryController,   // ✅
-    getUploadTypesController,     // ✅
+    getUploadHistoryController,
+    getUploadTypesController,
     getBatchRecordsController,
     uploadMiddleware
 }
