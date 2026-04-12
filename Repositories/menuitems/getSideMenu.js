@@ -1,4 +1,4 @@
-const  sql  = require("mssql");
+const sql = require("mssql");
 
 async function getSideMenu(req) {
     const { role_code } = req.user;
@@ -36,4 +36,80 @@ async function getSystemRoles(req) {
     `);
     return result.recordset;
 }
-module.exports = { getSideMenu, getSystemRoles };
+
+async function getFavourites(req) {
+    const { user_code } = req.user
+
+    const request = req.tenantDB.request()
+    request.input('emp_code', sql.VarChar, user_code)
+
+    const result = await request.query(`
+        SELECT f.route_path, f.created_at,
+               sm.sub_menu_name, sm.icon_name, sm.sub_menu_id
+        FROM tbl_menu_favourites f
+        JOIN tbl_sub_menus sm ON sm.route_path = f.route_path
+        WHERE f.emp_code = @emp_code
+          AND sm.is_active = 1
+        ORDER BY f.created_at DESC
+    `)
+    return { success: true, data: result.recordset }
+}
+
+async function toggleFavourite(req) {
+    const { user_code } = req.user
+    const { route_path } = req.body
+    console.log(`Toggling favourite for user_code: ${user_code}, route_path: ${route_path}`)
+
+    const checkReq = req.tenantDB.request()
+    checkReq.input('emp_code', sql.VarChar, user_code)
+    checkReq.input('route_path', sql.VarChar, route_path)
+    const check = await checkReq.query(`
+        SELECT COUNT(*) as cnt 
+        FROM tbl_menu_favourites
+        WHERE emp_code = @emp_code AND route_path = @route_path
+    `)
+
+    if (check.recordset[0].cnt > 0) {
+        const delReq = req.tenantDB.request()
+        delReq.input('emp_code', sql.VarChar, user_code)
+        delReq.input('route_path', sql.VarChar, route_path)
+        await delReq.query(`
+            DELETE FROM tbl_menu_favourites
+            WHERE emp_code = @emp_code AND route_path = @route_path
+        `)
+        return { success: true, action: 'removed' }
+    }
+
+    const countReq = req.tenantDB.request()
+    countReq.input('emp_code', sql.VarChar, user_code)
+    const countRes = await countReq.query(`
+        SELECT COUNT(*) as cnt FROM tbl_menu_favourites
+        WHERE emp_code = @emp_code
+    `)
+
+    if (countRes.recordset[0].cnt >= 10) {
+        const fifoReq = req.tenantDB.request()
+        fifoReq.input('emp_code', sql.VarChar, user_code)
+        await fifoReq.query(`
+            DELETE FROM tbl_menu_favourites
+            WHERE emp_code = @emp_code
+              AND route_path = (
+                SELECT TOP 1 route_path 
+                FROM tbl_menu_favourites
+                WHERE emp_code = @emp_code
+                ORDER BY created_at ASC
+              )
+        `)
+    }
+
+    const insertReq = req.tenantDB.request()
+    insertReq.input('emp_code', sql.VarChar, user_code)
+    insertReq.input('route_path', sql.VarChar, route_path)
+    await insertReq.query(`
+        INSERT INTO tbl_menu_favourites (emp_code, route_path)
+        VALUES (@emp_code, @route_path)
+    `)
+    return { success: true, action: 'added' }
+}
+
+module.exports = { getSideMenu, getSystemRoles, getFavourites, toggleFavourite }

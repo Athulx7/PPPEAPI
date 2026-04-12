@@ -20,6 +20,8 @@ router.get('/api/side-menu', tenantResolver, require('../Controllers/menuitems/m
 router.get('/api/mainMenu', tenantResolver, require('../Controllers/menuitems/menuItemsController').getMainMenuDataController)
 router.get('/api/searchMenu', tenantResolver, require('../Controllers/menuitems/menuItemsController').getSearchMenuController)
 router.get('/api/systemRoles', tenantResolver, require('../Controllers/menuitems/menuItemsController').getSystemRolesController)
+router.get('/api/menuFavourites', tenantResolver, require('../Controllers/menuitems/menuItemsController').getFavouritesController)
+router.post('/api/menuFavourites/toggle', tenantResolver, require('../Controllers/menuitems/menuItemsController').savetoggleFavourite)
 
 router.get('/api/getmenubasedcontrols/:menuid', tenantResolver, require('../Controllers/master/masterController').getMenuBasedControlsController)
 // master datas 
@@ -45,6 +47,13 @@ router.get('/api/empmst/hierarchyLevel', tenantResolver,  require('../Controller
 router.get('/api/empmst/employeeList', tenantResolver, require('../Controllers/employeeMasterController').getEmployeeListController)
 router.get("/api/empmst/getemployee/:id", tenantResolver, require('../Controllers/employeeMasterController').getEmployeeByIDController)
 router.put("/api/empmst/updateempmaster/:id", tenantResolver, require('../Controllers/employeeMasterController').UpdateEMpMstController)
+//end
+
+//salry component
+router.post('/api/salarycomponent/save', tenantResolver, require('../Controllers/salaryComponentsController').saveSalaryComponentsController)
+router.put('/api/salarycomponent/update', tenantResolver, require('../Controllers/salaryComponentsController').updateSalaryComponentController)
+router.get('/api/salarycomponent/list', tenantResolver, require('../Controllers/salaryComponentsController').getSalaryComponentsController)
+router.delete('/api/salarycomponent/delete/:id', tenantResolver, require('../Controllers/salaryComponentsController').deleteSalaryComponentController)
 //end
 
 //SALARY STRUCTURE

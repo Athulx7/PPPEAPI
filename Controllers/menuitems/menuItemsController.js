@@ -1,6 +1,6 @@
 const { getMainMenuData } = require("../../Repositories/menuitems/getMainMenuData");
 const { getSearchMenu } = require("../../Repositories/menuitems/getSearchMenu");
-const { getSideMenu, getSystemRoles } = require("../../Repositories/menuitems/getSideMenu")
+const { getSideMenu, getSystemRoles, getFavourites, toggleFavourite } = require("../../Repositories/menuitems/getSideMenu")
 
 async function MenuitemsController(req, res) {
     try {
@@ -59,22 +59,65 @@ async function getMainMenuDataController(req, res) {
     }
 }
 
-async function getSearchMenuController (req,res) {
-    try{
+async function getSearchMenuController(req, res) {
+    try {
         const result = await getSearchMenu(req)
         return res.status(200).json({
-            success : true,
-            message : "success",
-            data : result
+            success: true,
+            message: "success",
+            data: result
         })
     }
-    catch(err){
-        console.log("error in getting search result",err)
+    catch (err) {
+        console.log("error in getting search result", err)
         return res.status(500).json({
-            success : false,
-            message : "faild to get search data"
+            success: false,
+            message: "faild to get search data"
         })
     }
 }
 
-module.exports = { MenuitemsController, getSystemRolesController, getMainMenuDataController,getSearchMenuController }
+async function getFavouritesController(req, res) {
+    try {
+        const result = await getFavourites(req)
+        return res.status(200).json({
+            success: true,
+            message: "success",
+            data: result
+        })
+    }
+    catch (err) {
+        console.log("error in getting favourites", err)
+        return res.status(500).json({
+            success: false,
+            message: "failed to get favourites"
+        })
+    }
+}
+
+async function savetoggleFavourite(req, res) {
+    try {
+        const result = await toggleFavourite(req)
+        return res.status(200).json({
+            success: true,
+            message: "success",
+            data: result
+        })
+    }
+    catch (err) {
+        console.log("error in getting favourites", err)
+        return res.status(500).json({
+            success: false,
+            message: "failed to get favourites"
+        })
+    }
+}
+
+module.exports = {
+    MenuitemsController,
+    getSystemRolesController,
+    getMainMenuDataController,
+    getSearchMenuController,
+    getFavouritesController,
+    savetoggleFavourite
+}
