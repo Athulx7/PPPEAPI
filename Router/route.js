@@ -2,16 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const tenantResolver = require('../Middleware/tennetMiddleware').tenantResolver;
-const {
-    getUploadMastersController,
-    downloadTemplateController,
-    uploadFileController,
-    getBatchStatusController,
-    getBatchErrorsController,
-    getUploadHistoryController,
-    getUploadTypesController,
-    uploadMiddleware,
-    getBatchRecordsController
+const { getUploadMastersController, downloadTemplateController, uploadFileController, getBatchStatusController, getBatchErrorsController,
+    getUploadHistoryController, getUploadTypesController, uploadMiddleware, getBatchRecordsController
 } = require('../Controllers/uploadData/dataUploadController')
 
 router.post('/api/login', require('../Controllers/login/authController').login)
@@ -34,16 +26,16 @@ router.post('/api/master/:mastercode/save', tenantResolver, require('../Controll
 
 //comapay settings
 router.post('/api/savecomapnyinfo', tenantResolver, require('../Controllers/companysettingsCotroller').saveUpdaetCOmpanySettingsController)
-router.get('/api/getcompanyinfo',tenantResolver, require('../Controllers/companysettingsCotroller').getcompanyinfoCOntrller)
+router.get('/api/getcompanyinfo', tenantResolver, require('../Controllers/companysettingsCotroller').getcompanyinfoCOntrller)
 //end
 
 //employee mst
 router.get('/api/empmst/getcontrols', tenantResolver, require('../Controllers/employeeMasterController').getEMpMasterCntrlsController)
 router.get('/api/empmst/getempmstdropdowndata/:column', tenantResolver, require('../Controllers/employeeMasterController').getEmpMstDropdwonDataController)
-router.post('/api/empmst/saveempmaster',tenantResolver, require('../Controllers/employeeMasterController').saveEmpmasterController)
+router.post('/api/empmst/saveempmaster', tenantResolver, require('../Controllers/employeeMasterController').saveEmpmasterController)
 router.get('/api/empmst/departmentsList', tenantResolver, require('../Controllers/employeeMasterController').getDepartmentForEMpListController)
 router.get('/api/empmst/designantionList', tenantResolver, require('../Controllers/employeeMasterController').getDesignationForEMpListController)
-router.get('/api/empmst/hierarchyLevel', tenantResolver,  require('../Controllers/employeeMasterController').gethierarchyLevelForEMpListController)
+router.get('/api/empmst/hierarchyLevel', tenantResolver, require('../Controllers/employeeMasterController').gethierarchyLevelForEMpListController)
 router.get('/api/empmst/employeeList', tenantResolver, require('../Controllers/employeeMasterController').getEmployeeListController)
 router.get("/api/empmst/getemployee/:id", tenantResolver, require('../Controllers/employeeMasterController').getEmployeeByIDController)
 router.put("/api/empmst/updateempmaster/:id", tenantResolver, require('../Controllers/employeeMasterController').UpdateEMpMstController)
@@ -71,18 +63,18 @@ router.post('/api/salarystructure/saveassign', tenantResolver, require('../Contr
 router.put('/api/salarystructure/:id', tenantResolver, require('../Controllers/salaryStructureController').updateSalaryStructureController)
 router.get('/api/salarystructure/:id', tenantResolver, require('../Controllers/salaryStructureController').getSalaryStructureByIdController)
 router.get('/api/salarystructure/assignment/:id', tenantResolver, require('../Controllers/salaryAssignmentController').getAssignmentByIdController)
-router.put('/api/salarystructure/assignment/:id',tenantResolver, require('../Controllers/salaryAssignmentController').updateSalaryAssignmentController)
+router.put('/api/salarystructure/assignment/:id', tenantResolver, require('../Controllers/salaryAssignmentController').updateSalaryAssignmentController)
 //end
 
 //upload data
-router.get( '/api/upload/masters',               tenantResolver, getUploadMastersController)
-router.get( '/api/upload/template/:uploadCode',  tenantResolver, downloadTemplateController)
-router.post('/api/upload/file',                  tenantResolver, uploadMiddleware, uploadFileController)
-router.get( '/api/upload/batch/:batchId',        tenantResolver, getBatchStatusController)
-router.get( '/api/upload/batch/:batchId/errors', tenantResolver, getBatchErrorsController)
-router.get('/api/upload/batch/:batchId/records',tenantResolver,getBatchRecordsController)
-router.get( '/api/upload/history',               tenantResolver, getUploadHistoryController)
-router.get( '/api/upload/history/types',         tenantResolver, getUploadTypesController)
+router.get('/api/upload/masters', tenantResolver, getUploadMastersController)
+router.get('/api/upload/template/:uploadCode', tenantResolver, downloadTemplateController)
+router.post('/api/upload/file', tenantResolver, uploadMiddleware, uploadFileController)
+router.get('/api/upload/batch/:batchId', tenantResolver, getBatchStatusController)
+router.get('/api/upload/batch/:batchId/errors', tenantResolver, getBatchErrorsController)
+router.get('/api/upload/batch/:batchId/records', tenantResolver, getBatchRecordsController)
+router.get('/api/upload/history', tenantResolver, getUploadHistoryController)
+router.get('/api/upload/history/types', tenantResolver, getUploadTypesController)
 //end
 
 //module mapping
@@ -101,6 +93,16 @@ router.post('/api/chat/rooms/dm', tenantResolver, require('../Controllers/chatCo
 router.get('/api/chat/rooms', tenantResolver, require('../Controllers/chatController').getChatRoomsController)
 router.get('/api/chat/rooms/:roomId/messages', tenantResolver, require('../Controllers/chatController').getChatMessagesController)
 
+//Leave Master
+router.get('/api/leavemaster/categoryList', tenantResolver, require('../Controllers/leaveMasterController').getLeaveMasterCategoryController)
+router.get('/api/leavemaster/categoryData/:categorycode', tenantResolver, require('../Controllers/leaveMasterController').getLeaveCategoryDataBasedSelectionController)
+router.get('/api/leavemaster/fieldConfig', tenantResolver, require('../Controllers/leaveMasterController').getLeaveconfigController)
+router.get('/api/leavemaster/accrualTypeList', tenantResolver, require('../Controllers/leaveMasterController').getLeaveMasterAccuralTypeController)
+router.post('/api/leavemaster/saveLeaveType', tenantResolver, require('../Controllers/leaveMasterController').saveLeaveTypeController)
+router.get('/api/leavemaster/savedLeaveTypeList', tenantResolver, require('../Controllers/leaveMasterController').getSavedLeaveTypeDataController)
+router.get('/api/leavemaster/leaveType/:id', tenantResolver, require('../Controllers/leaveMasterController').getLeaveTypeDataWithIDController)
+router.put('/api/leavemaster/updateLeaveType/:id', tenantResolver, require('../Controllers/leaveMasterController').updateLeaveTypeController)
+router.delete('/api/leavemaster/deleteLeaveType/:id', tenantResolver, require('../Controllers/leaveMasterController').deleteLeaveTypeByIdController)
 
 
 
