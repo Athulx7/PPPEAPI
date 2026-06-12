@@ -104,6 +104,24 @@ router.get('/api/leavemaster/leaveType/:id', tenantResolver, require('../Control
 router.put('/api/leavemaster/updateLeaveType/:id', tenantResolver, require('../Controllers/leaveMasterController').updateLeaveTypeController)
 router.delete('/api/leavemaster/deleteLeaveType/:id', tenantResolver, require('../Controllers/leaveMasterController').deleteLeaveTypeByIdController)
 
+//Leave Settings
+router.get('/api/leavesettings/department', tenantResolver, require('../Controllers/leaveSettingsController').getLeaveSettingsDepartmentController)
+router.get('/api/leavesettings/designation', tenantResolver, require('../Controllers/leaveSettingsController').getLeaveSettingsDesignationController)
+router.get('/api/leavesettings/hierarchy', tenantResolver, require('../Controllers/leaveSettingsController').getLeaveSettingsHierarchyController)
+router.get('/api/leavesettings/employeetype', tenantResolver, require('../Controllers/leaveSettingsController').getLeaveSettingsEmployeeTypeController)
+router.get('/api/leavesettings/employees', tenantResolver, require('../Controllers/leaveSettingsController').getLeaveSettingsEMployeesListController)
+router.get('/api/leavesettings/leaveTypes', tenantResolver, require('../Controllers/leaveSettingsController').getLeaveTypesForSettingsController)
+router.get('/api/leavesettings/allocations', tenantResolver, require('../Controllers/leaveSettingsController').getLeaveAllocationsController)
+router.get('/api/leavesettings/allocation/:id', tenantResolver, require('../Controllers/leaveSettingsController').getLeaveAllocationByIdController)
+router.post('/api/leavesettings/allocation', tenantResolver, require('../Controllers/leaveSettingsController').saveSingleAllocationController)
+router.post('/api/leavesettings/allocation/bulk', tenantResolver, require('../Controllers/leaveSettingsController').saveBulkAllocationController)
+router.put('/api/leavesettings/allocation/:id', tenantResolver, require('../Controllers/leaveSettingsController').updateLeaveAllocationController)
+router.delete('/api/leavesettings/allocation/:id', tenantResolver, require('../Controllers/leaveSettingsController').deleteLeaveAllocationController)
+router.get('/api/leavesettings/employees/all', tenantResolver, require('../Controllers/leaveSettingsController').GetAllEmplForLeavesettings)
+router.get('/api/leavesettings/designations/all', tenantResolver, require('../Controllers/leaveSettingsController').GetAllDesignationForLeavesettings)
+
+
+
 
 
 
