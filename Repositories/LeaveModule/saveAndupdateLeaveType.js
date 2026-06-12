@@ -12,6 +12,7 @@ async function saveLeaveType(req) {
         leaveCategory,
         accrualType = null,
         maximumDays = null,
+        leaveApprover = null,
         ...conditionalFields
     } = data
 
@@ -42,6 +43,7 @@ async function saveLeaveType(req) {
             .input("LeaveCategoryCode", sql.VarChar(10), leaveCategory)
             .input("accural_code", sql.VarChar(10), accrualType || null)
             .input("MaximumDays", sql.Int, maximumDays ? parseInt(maximumDays) : null)
+            .input("approver_heihrarchy_code", sql.VarChar(10), leaveApprover || null)
             .query(`
                 INSERT INTO tbl_leave_type
                 (
@@ -51,6 +53,7 @@ async function saveLeaveType(req) {
                     LeaveCategoryCode,
                     accural_code,
                     MaximumDays,
+                    approver_heihrarchy_code,
                     IsActive,
                     CreatedDate
                 )
@@ -63,6 +66,7 @@ async function saveLeaveType(req) {
                     @LeaveCategoryCode,
                     @accural_code,
                     @MaximumDays,
+                    @approver_heihrarchy_code,
                     1,
                     GETDATE()
                 )
@@ -134,6 +138,7 @@ async function updateLeaveType(req) {
         leaveCategory,
         accrualType = null,
         maximumDays = null,
+        leaveApprover = null,
         ...conditionalFields
     } = req.body
 
@@ -179,6 +184,7 @@ async function updateLeaveType(req) {
             .input( "LeaveCategoryCode",sql.VarChar(10),leaveCategory)
             .input("accural_code",sql.VarChar(10),accrualType || null)
             .input("MaximumDays",sql.Int,maximumDays ? parseInt(maximumDays) : null)
+            .input("approver_heihrarchy_code", sql.VarChar(10), leaveApprover || null)
             .query(`
                 UPDATE tbl_leave_type
                 SET
@@ -188,6 +194,7 @@ async function updateLeaveType(req) {
                     LeaveCategoryCode = @LeaveCategoryCode,
                     accural_code = @accural_code,
                     MaximumDays = @MaximumDays,
+                    approver_heihrarchy_code = @approver_heihrarchy_code,
                     ModifiedDate = GETDATE()
                 WHERE id = @id
             `)

@@ -1,4 +1,4 @@
-const { getLeaveMasterCategoryRepo, getLeaveCategoryDataBasedSelectionRepo, getLeaveconfigRepo, getLeaveMasterAccuralTypeRepo } = require("../Repositories/LeaveModule/getCommonDatas")
+const { getLeaveMasterCategoryRepo, getLeaveCategoryDataBasedSelectionRepo, getLeaveconfigRepo, getLeaveMasterAccuralTypeRepo, FungetLeaveApproversLeaveMst } = require("../Repositories/LeaveModule/getCommonDatas")
 const { getLeaveTypeFOrTableRepo, getLeaveTypeWithID } = require("../Repositories/LeaveModule/getLeaveTypeDatas")
 const { saveLeaveType, updateLeaveType, deleteLeaveTypeById } = require("../Repositories/LeaveModule/saveAndupdateLeaveType")
 
@@ -171,8 +171,26 @@ async function deleteLeaveTypeByIdController(req, res) {
     }
 }
 
+async function getLeaveApproversLeaveMstController(req,res){
+    try{
+        const result = await FungetLeaveApproversLeaveMst(req,res)
+        return res.status(200).json({
+            success: true,
+            message: "success",
+            data: result
+        })
+    }
+    catch(Err){
+        console.log(Err)
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch approvers for leave master"
+        })
+    }
+}
 module.exports = {
     getLeaveMasterCategoryController, getLeaveCategoryDataBasedSelectionController,
     getLeaveconfigController, getLeaveMasterAccuralTypeController, saveLeaveTypeController,
-    getSavedLeaveTypeDataController, getLeaveTypeDataWithIDController, updateLeaveTypeController, deleteLeaveTypeByIdController
+    getSavedLeaveTypeDataController, getLeaveTypeDataWithIDController, updateLeaveTypeController, deleteLeaveTypeByIdController,
+    getLeaveApproversLeaveMstController
 }

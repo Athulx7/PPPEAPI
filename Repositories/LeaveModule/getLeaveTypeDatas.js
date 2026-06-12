@@ -2,7 +2,7 @@ const sql = require("mssql")
 async function getLeaveTypeFOrTableRepo(req, res) {
     const request = req.tenantDB.request()
     const result = await request.query(`
-             SELECT
+            SELECT
                 lt.id,
                 lt.LeaveTypeCode,
                 lt.LeaveTypeName,
@@ -12,12 +12,15 @@ async function getLeaveTypeFOrTableRepo(req, res) {
                 lt.accural_code,
                 at.accural_name     AS AccrualTypeName,
                 lt.MaximumDays,
+				lt.approver_heihrarchy_code,
+				ah.hierarchy_name,
                 lt.IsActive,
                 lt.CreatedDate,
                 lt.ModifiedDate
             FROM dbo.tbl_leave_type lt
             LEFT JOIN dbo.tbl_leave_category      lc ON lc.CategoryCode = lt.LeaveCategoryCode
             LEFT JOIN dbo.tbl_leave_accrual_types at ON at.accural_code = lt.accural_code
+			left join tbl_hierarchy_mst ah on ah.hierarchy_code = lt.approver_heihrarchy_code
             ORDER BY lt.LeaveTypeCode
     `)
     return result.recordset
@@ -40,6 +43,7 @@ async function getLeaveTypeWithID(req) {
                 lt.LeaveCategoryCode AS leaveCategory,
                 lt.accural_code AS accrualType,
                 lt.MaximumDays AS maximumDays,
+				lt.approver_heihrarchy_code as leaveApprover,
                 lt.IsActive AS isActive
             FROM tbl_leave_type lt
             WHERE lt.id = @id

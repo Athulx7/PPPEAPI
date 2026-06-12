@@ -70,5 +70,24 @@ async function getLeaveMasterAccuralTypeRepo(req, res) {
     return result.recordset
 }
 
+async function FungetLeaveApproversLeaveMst(req,res){
+     const request = req.tenantDB.request()
+    const result = await request.query(`
+        	    SELECT
+        'HR' AS value,
+        'HR' AS label
+
+    UNION
+    SELECT
+        hierarchy_code AS value,
+        hierarchy_name AS label
+    FROM tbl_hierarchy_mst
+    WHERE is_active = 1
+
+ORDER BY  label;
+    `)
+    return result.recordset
+}
+
 module.exports = { 
-    getLeaveMasterCategoryRepo, getLeaveCategoryDataBasedSelectionRepo, getLeaveconfigRepo, getLeaveMasterAccuralTypeRepo }
+    getLeaveMasterCategoryRepo, getLeaveCategoryDataBasedSelectionRepo, getLeaveconfigRepo, getLeaveMasterAccuralTypeRepo, FungetLeaveApproversLeaveMst }

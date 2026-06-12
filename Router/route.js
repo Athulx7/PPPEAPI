@@ -103,6 +103,7 @@ router.get('/api/leavemaster/savedLeaveTypeList', tenantResolver, require('../Co
 router.get('/api/leavemaster/leaveType/:id', tenantResolver, require('../Controllers/leaveMasterController').getLeaveTypeDataWithIDController)
 router.put('/api/leavemaster/updateLeaveType/:id', tenantResolver, require('../Controllers/leaveMasterController').updateLeaveTypeController)
 router.delete('/api/leavemaster/deleteLeaveType/:id', tenantResolver, require('../Controllers/leaveMasterController').deleteLeaveTypeByIdController)
+router.get('/api/leavemaster/leaveapprovers', tenantResolver, require('../Controllers/leaveMasterController').getLeaveApproversLeaveMstController)
 
 //Leave Settings
 router.get('/api/leavesettings/department', tenantResolver, require('../Controllers/leaveSettingsController').getLeaveSettingsDepartmentController)
