@@ -122,6 +122,23 @@ router.get('/api/leavesettings/employees/all', tenantResolver, require('../Contr
 router.get('/api/leavesettings/designations/all', tenantResolver, require('../Controllers/leaveSettingsController').GetAllDesignationForLeavesettings)
 
 
+    // JOB TRACKING - CALENDAR
+    router.get("/api/jobs/calendar", tenantResolver, require('../Controllers/jobCalendarController').getCalendarBlocks)
+    router.get("/api/jobs/calendar/month", tenantResolver, require('../Controllers/jobCalendarController').getMonthActivity)
+    router.get("/api/jobs/calendar/summary", tenantResolver, require('../Controllers/jobCalendarController').getMonthSummary)
+
+    // JOB TRACKING
+    router.get('/api/jobs/masters', tenantResolver, require('../Controllers/jobController').getFormMastersController)
+    router.get('/api/jobs/custom-fields/:jobTypeId', tenantResolver, require('../Controllers/jobController').getCustomFieldsController)
+    router.get('/api/jobs', tenantResolver, require('../Controllers/jobController').listJobsController)
+    router.get('/api/jobs/:jobId', tenantResolver, require('../Controllers/jobController').getJobController)
+    router.post('/api/jobs', tenantResolver, require('../Controllers/jobController').createJobController)
+    router.post('/api/jobs/:parentJobId/sub-job', tenantResolver, require('../Controllers/jobController').createSubJobController)
+    router.post('/api/jobs/:jobId/run', tenantResolver, require('../Controllers/jobController').runJobController)
+    router.post('/api/jobs/:jobId/stop', tenantResolver, require('../Controllers/jobController').stopJobController)
+    router.post('/api/jobs/:jobId/assign', tenantResolver, require('../Controllers/jobController').assignJobController)
+ 
+
 
 
 
