@@ -2,7 +2,7 @@ const sql = require("mssql");
 
 async function getMasterTableList(req) {
     const { mastercode } = req.params
-    console.log('master code',mastercode)
+    // console.log('master code',mastercode)
 
     const request = req.tenantDB.request()
     request.input("mastercode", sql.VarChar, mastercode)

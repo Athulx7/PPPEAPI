@@ -144,7 +144,6 @@ async function getLeaveAllocationByIdRepo(req) {
 async function saveSingleAllocationRepo(req) {
     const db = req.tenantDB
     const { emp_code, allocations } = req.body
-    console.log('request body', req.body)
     console.log('empcode amd allocations', { emp_code, allocations })
 
     if (!emp_code || !Array.isArray(allocations) || allocations.length === 0) {

@@ -92,6 +92,13 @@ router.get('/api/chat/employees', tenantResolver, require('../Controllers/chatCo
 router.post('/api/chat/rooms/dm', tenantResolver, require('../Controllers/chatController').createChatDmController)
 router.get('/api/chat/rooms', tenantResolver, require('../Controllers/chatController').getChatRoomsController)
 router.get('/api/chat/rooms/:roomId/messages', tenantResolver, require('../Controllers/chatController').getChatMessagesController)
+router.post('/api/chatbot/query', tenantResolver, require('../Controllers/chatbotController').handleChatbotQuery)
+router.post('/api/chatbot/sessions/new', tenantResolver, require('../Controllers/chatbotController').handleCreateSession)
+router.get('/api/chatbot/sessions', tenantResolver, require('../Controllers/chatbotController').handleGetSessions)
+router.get('/api/chatbot/sessions/:sessionId/messages', tenantResolver, require('../Controllers/chatbotController').handleGetSessionMessages)
+router.delete('/api/chatbot/sessions/:sessionId', tenantResolver, require('../Controllers/chatbotController').handleDeleteSession)
+
+
 
 //Leave Master
 router.get('/api/leavemaster/categoryList', tenantResolver, require('../Controllers/leaveMasterController').getLeaveMasterCategoryController)
@@ -122,23 +129,48 @@ router.get('/api/leavesettings/employees/all', tenantResolver, require('../Contr
 router.get('/api/leavesettings/designations/all', tenantResolver, require('../Controllers/leaveSettingsController').GetAllDesignationForLeavesettings)
 
 
-    // JOB TRACKING - CALENDAR
-    router.get("/api/jobs/calendar", tenantResolver, require('../Controllers/jobCalendarController').getCalendarBlocks)
-    router.get("/api/jobs/calendar/month", tenantResolver, require('../Controllers/jobCalendarController').getMonthActivity)
-    router.get("/api/jobs/calendar/summary", tenantResolver, require('../Controllers/jobCalendarController').getMonthSummary)
+// JOB TRACKING - CALENDAR
+router.get("/api/jobs/calendar", tenantResolver, require('../Controllers/jobCalendarController').getCalendarBlocks)
+router.get("/api/jobs/calendar/month", tenantResolver, require('../Controllers/jobCalendarController').getMonthActivity)
+router.get("/api/jobs/calendar/summary", tenantResolver, require('../Controllers/jobCalendarController').getMonthSummary)
 
-    // JOB TRACKING
-    router.get('/api/jobs/masters', tenantResolver, require('../Controllers/jobController').getFormMastersController)
-    router.get('/api/jobs/custom-fields/:jobTypeId', tenantResolver, require('../Controllers/jobController').getCustomFieldsController)
-    router.get('/api/jobs', tenantResolver, require('../Controllers/jobController').listJobsController)
-    router.get('/api/jobs/:jobId', tenantResolver, require('../Controllers/jobController').getJobController)
-    router.post('/api/jobs', tenantResolver, require('../Controllers/jobController').createJobController)
-    router.post('/api/jobs/:parentJobId/sub-job', tenantResolver, require('../Controllers/jobController').createSubJobController)
-    router.post('/api/jobs/:jobId/run', tenantResolver, require('../Controllers/jobController').runJobController)
-    router.post('/api/jobs/:jobId/stop', tenantResolver, require('../Controllers/jobController').stopJobController)
-    router.post('/api/jobs/:jobId/assign', tenantResolver, require('../Controllers/jobController').assignJobController)
- 
 
+// JOB TRACKING
+router.get('/api/jobs/masters', tenantResolver, require('../Controllers/jobController').getFormMastersController)
+router.get('/api/jobs/custom-fields/:jobTypeId', tenantResolver, require('../Controllers/jobController').getCustomFieldsController)
+router.get('/api/jobs', tenantResolver, require('../Controllers/jobController').listJobsController)
+router.get('/api/jobs/:jobId', tenantResolver, require('../Controllers/jobController').getJobController)
+router.post('/api/jobs', tenantResolver, require('../Controllers/jobController').createJobController)
+router.post('/api/jobs/:parentJobId/sub-job', tenantResolver, require('../Controllers/jobController').createSubJobController)
+router.post('/api/jobs/:jobId/run', tenantResolver, require('../Controllers/jobController').runJobController)
+router.post('/api/jobs/:jobId/stop', tenantResolver, require('../Controllers/jobController').stopJobController)
+router.post('/api/jobs/:jobId/assign', tenantResolver, require('../Controllers/jobController').assignJobController)
+
+router.post('/api/excmd/execute', tenantResolver, require('../Controllers/excmdController').executeQuery)
+
+
+// USER PROFILE
+router.get('/api/userprofile/getprofile', tenantResolver, require('../Controllers/userProfileController').getUserProfileController)
+router.put('/api/userprofile/updateprofile', tenantResolver, require('../Controllers/userProfileController').updateUserProfileController)
+
+
+//Payroll Settings
+router.get('/api/payrollsettings/modules', tenantResolver, require('../Controllers/payRollsettingsController').getPayrollSettingsModulesController)
+router.get('/api/payrollsettings/fields/:moduleKey', tenantResolver, require('../Controllers/payRollsettingsController').getModuleFieldsController)
+router.post('/api/payrollsettings/save-module', tenantResolver, require('../Controllers/payRollsettingsController').saveModuleSettingsController)
+router.get('/api/payrollsettings/work-schedules', tenantResolver, require('../Controllers/payRollsettingsController').getWorkSchedulesController)
+router.post('/api/payrollsettings/work-schedules', tenantResolver, require('../Controllers/payRollsettingsController').saveWorkScheduleController)
+router.put('/api/payrollsettings/work-schedules/:id', tenantResolver, require('../Controllers/payRollsettingsController').updateWorkScheduleController)
+router.delete('/api/payrollsettings/work-schedules/:id', tenantResolver, require('../Controllers/payRollsettingsController').deleteWorkScheduleController)
+// Statutory Routes
+router.get('/api/payrollsettings/statutory/states', tenantResolver, require('../Controllers/payRollsettingsController').getStatesForStatutoryController)
+router.post('/api/payrollsettings/statutory/pt-slabs', tenantResolver, require('../Controllers/payRollsettingsController').savePtSlabController)
+router.put('/api/payrollsettings/statutory/pt-slabs/:id', tenantResolver, require('../Controllers/payRollsettingsController').updatePtSlabController)
+router.delete('/api/payrollsettings/statutory/pt-slabs/:id', tenantResolver, require('../Controllers/payRollsettingsController').deletePtSlabController)
+router.post('/api/payrollsettings/statutory/lwf', tenantResolver, require('../Controllers/payRollsettingsController').saveLwfController)
+router.put('/api/payrollsettings/statutory/lwf/:id', tenantResolver, require('../Controllers/payRollsettingsController').updateLwfController)
+router.delete('/api/payrollsettings/statutory/lwf/:id', tenantResolver, require('../Controllers/payRollsettingsController').deleteLwfController)
+router.post('/api/payrollsettings/statutory/esi', tenantResolver, require('../Controllers/payRollsettingsController').saveEsiController)
 
 
 

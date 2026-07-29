@@ -50,7 +50,6 @@ const getCustomFields = async (req, res) => {
 
 const createJob = async (req, res) => {
     try {
-        console.log("createJob request body:", req.body)
         const pool = req.tenantDB
         const body = req.body
 
