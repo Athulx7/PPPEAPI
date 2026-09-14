@@ -57,14 +57,19 @@ async function getWorkSchedulesRepo(req) {
                 is_fixed_start_end AS isFixedStartEnd, start_time AS startTime,
                 end_time AS endTime, overtime_applicable AS overtimeApplicable,
                 overtime_rate AS overtimeRate, shift_allowance AS shiftAllowance,
-                night_shift_allowance AS nightShiftAllowance, updated_at AS updatedAt
+                night_shift_allowance AS nightShiftAllowance,
+                ISNULL(overtime_carry_forward, 0) AS overtimeCarryForward,
+                ISNULL(overtime_carry_forward_max_mins, 30) AS overtimeCarryForwardMaxMins,
+                ISNULL(overtime_carry_forward_scope, 'weekly') AS overtimeCarryForwardScope,
+                updated_at AS updatedAt
             FROM tbl_payroll_employee_work_schedules ORDER BY department, employee_name
         `)
         schedules = schedRes.recordset.map(s => ({
             ...s,
             workWeek: s.workWeek ? (typeof s.workWeek === 'string' ? JSON.parse(s.workWeek) : s.workWeek) : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
             isFixedStartEnd: Boolean(s.isFixedStartEnd),
-            overtimeApplicable: Boolean(s.overtimeApplicable)
+            overtimeApplicable: Boolean(s.overtimeApplicable),
+            overtimeCarryForward: Boolean(s.overtimeCarryForward)
         }))
     } catch (err) {
         console.log("Schedules query note:", err.message)
@@ -86,6 +91,9 @@ async function saveWorkScheduleRepo(req) {
     const overtimeRate = schedule.overtimeRate || 1.5
     const shiftAllowance = schedule.shiftAllowance || 0.0
     const nightShiftAllowance = schedule.nightShiftAllowance || 0.0
+    const overtimeCarryForward = schedule.overtimeCarryForward ? 1 : 0
+    const overtimeCarryForwardMaxMins = parseInt(schedule.overtimeCarryForwardMaxMins || 30, 10)
+    const overtimeCarryForwardScope = schedule.overtimeCarryForwardScope || 'weekly'
 
     let targetEmployees = []
 
@@ -147,6 +155,9 @@ async function saveWorkScheduleRepo(req) {
         upsertReq.input("overtime_rate", sql.Decimal(4, 2), overtimeRate)
         upsertReq.input("shift_allowance", sql.Decimal(10, 2), shiftAllowance)
         upsertReq.input("night_shift_allowance", sql.Decimal(10, 2), nightShiftAllowance)
+        upsertReq.input("overtime_carry_forward", sql.Bit, overtimeCarryForward)
+        upsertReq.input("overtime_carry_forward_max_mins", sql.Int, overtimeCarryForwardMaxMins)
+        upsertReq.input("overtime_carry_forward_scope", sql.VarChar, overtimeCarryForwardScope)
 
         if (checkRes.recordset && checkRes.recordset.length > 0) {
             upsertReq.input("id", sql.Int, checkRes.recordset[0].id)
@@ -165,6 +176,9 @@ async function saveWorkScheduleRepo(req) {
                     overtime_rate = @overtime_rate,
                     shift_allowance = @shift_allowance,
                     night_shift_allowance = @night_shift_allowance,
+                    overtime_carry_forward = @overtime_carry_forward,
+                    overtime_carry_forward_max_mins = @overtime_carry_forward_max_mins,
+                    overtime_carry_forward_scope = @overtime_carry_forward_scope,
                     updated_at = GETDATE()
                 WHERE id = @id
             `)
@@ -173,11 +187,13 @@ async function saveWorkScheduleRepo(req) {
                 INSERT INTO tbl_payroll_employee_work_schedules (
                     user_code, employee_name, department, designation, target_type,
                     work_week, working_hours_per_day, is_fixed_start_end, start_time, end_time,
-                    overtime_applicable, overtime_rate, shift_allowance, night_shift_allowance, updated_at
+                    overtime_applicable, overtime_rate, shift_allowance, night_shift_allowance,
+                    overtime_carry_forward, overtime_carry_forward_max_mins, overtime_carry_forward_scope, updated_at
                 ) VALUES (
                     @user_code, @employee_name, @department, @designation, @target_type,
                     @work_week, @working_hours_per_day, @is_fixed_start_end, @start_time, @end_time,
-                    @overtime_applicable, @overtime_rate, @shift_allowance, @night_shift_allowance, GETDATE()
+                    @overtime_applicable, @overtime_rate, @shift_allowance, @night_shift_allowance,
+                    @overtime_carry_forward, @overtime_carry_forward_max_mins, @overtime_carry_forward_scope, GETDATE()
                 )
             `)
         }
@@ -203,6 +219,9 @@ async function updateWorkScheduleRepo(req) {
     request.input("overtime_applicable", sql.Bit, schedule.overtimeApplicable ? 1 : 0)
     request.input("overtime_rate", sql.Decimal(4, 2), schedule.overtimeRate || 1.5)
     request.input("shift_allowance", sql.Decimal(10, 2), schedule.shiftAllowance || 0.0)
+    request.input("overtime_carry_forward", sql.Bit, schedule.overtimeCarryForward ? 1 : 0)
+    request.input("overtime_carry_forward_max_mins", sql.Int, parseInt(schedule.overtimeCarryForwardMaxMins || 30, 10))
+    request.input("overtime_carry_forward_scope", sql.VarChar, schedule.overtimeCarryForwardScope || 'weekly')
 
     await request.query(`
         UPDATE tbl_payroll_employee_work_schedules
@@ -215,6 +234,9 @@ async function updateWorkScheduleRepo(req) {
             overtime_applicable = @overtime_applicable,
             overtime_rate = @overtime_rate,
             shift_allowance = @shift_allowance,
+            overtime_carry_forward = @overtime_carry_forward,
+            overtime_carry_forward_max_mins = @overtime_carry_forward_max_mins,
+            overtime_carry_forward_scope = @overtime_carry_forward_scope,
             updated_at = GETDATE()
         WHERE id = @id
     `)

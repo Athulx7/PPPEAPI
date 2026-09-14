@@ -1,10 +1,10 @@
 const sql = require('mssql')
 async function getMainMenuData(req) {
-    const { role_code, emp_code, designation_code } = req.user;
+    const { role_code, user_code, designation_code } = req.user;
     const request = req.tenantDB.request();
 
     request.input("role_code", sql.VarChar, role_code);
-    request.input("emp_code", sql.VarChar, emp_code);
+    request.input("emp_code", sql.VarChar, user_code);
     request.input("designation_code", sql.VarChar, designation_code);
 
     const result = await request.query(`

@@ -152,6 +152,7 @@ router.post('/api/excmd/execute', tenantResolver, require('../Controllers/excmdC
 // USER PROFILE
 router.get('/api/userprofile/getprofile', tenantResolver, require('../Controllers/userProfileController').getUserProfileController)
 router.put('/api/userprofile/updateprofile', tenantResolver, require('../Controllers/userProfileController').updateUserProfileController)
+router.post('/api/userprofile/changepassword', tenantResolver, require('../Controllers/userProfileController').changePasswordController)
 
 
 //Payroll Settings
@@ -172,7 +173,52 @@ router.put('/api/payrollsettings/statutory/lwf/:id', tenantResolver, require('..
 router.delete('/api/payrollsettings/statutory/lwf/:id', tenantResolver, require('../Controllers/payRollsettingsController').deleteLwfController)
 router.post('/api/payrollsettings/statutory/esi', tenantResolver, require('../Controllers/payRollsettingsController').saveEsiController)
 
+//MyLeaves
+router.get('/api/myleaves/getAllMyLeaves', tenantResolver, require('../Controllers/LeaveMyLeavesController').getAllMyLeavesDataController)
+router.get('/api/myleaves/getLeaveHistory', tenantResolver, require('../Controllers/LeaveMyLeavesController').getLeaveHistoryController)
+router.get('/api/myleaves/getLeaveAnalytics', tenantResolver, require('../Controllers/LeaveMyLeavesController').getLeaveAnalyticsController)
 
+//LeaveRequest
+router.get('/api/leaverequest/userWorkSchedule', tenantResolver, require('../Controllers/LeaveRequestController').getUserWorkScheduleController)
+router.get('/api/leaverequest/holidays', tenantResolver, require('../Controllers/LeaveRequestController').getHolidayOfEmployeeBranchWIseController)
+router.get('/api/leaverequest/myRequests', tenantResolver, require('../Controllers/LeaveRequestController').getMyLeaveRequestsController)
+router.post('/api/leaverequest/apply', tenantResolver, require('../Controllers/LeaveRequestController').applyLeaveRequestController)
+router.post('/api/leaverequest/cancel', tenantResolver, require('../Controllers/LeaveRequestController').cancelLeaveRequestController)
 
+//LeaveApproval
+router.get('/api/leaveapproval/getDownlineRequests', tenantResolver, require('../Controllers/LeaveApprovalController').getDownlineLeaveRequestsController)
+router.post('/api/leaveapproval/approve', tenantResolver, require('../Controllers/LeaveApprovalController').approveLeaveRequestController)
+router.post('/api/leaveapproval/reject', tenantResolver, require('../Controllers/LeaveApprovalController').rejectLeaveRequestController)
+
+//Attendance
+router.get('/api/attendance/myAttendance', tenantResolver, require('../Controllers/AttendanceController').getMyAttendanceController)
+router.get('/api/attendance/myRegularizations', tenantResolver, require('../Controllers/AttendanceController').getMyRegularizationsController)
+router.post('/api/attendance/applyRegularization', tenantResolver, require('../Controllers/AttendanceController').applyRegularizationController)
+router.post('/api/attendance/transferCurrentMonth', tenantResolver, require('../Controllers/AttendanceController').transferCurrentMonthAttendanceController)
+
+//Salary Advance
+router.get('/api/salaryadvance/info', tenantResolver, require('../Controllers/salaryAdvanceController').getSalaryAdvanceInfoController)
+router.get('/api/salaryadvance/my-requests', tenantResolver, require('../Controllers/salaryAdvanceController').getMySalaryAdvanceRequestsController)
+router.post('/api/salaryadvance/request', tenantResolver, require('../Controllers/salaryAdvanceController').createSalaryAdvanceRequestController)
+router.post('/api/salaryadvance/cancel', tenantResolver, require('../Controllers/salaryAdvanceController').cancelSalaryAdvanceRequestController)
+router.get('/api/salaryadvance/approval-list', tenantResolver, require('../Controllers/salaryAdvanceController').getDownlineSalaryAdvanceRequestsController)
+router.post('/api/salaryadvance/approve', tenantResolver, require('../Controllers/salaryAdvanceController').approveSalaryAdvanceRequestController)
+router.post('/api/salaryadvance/reject', tenantResolver, require('../Controllers/salaryAdvanceController').rejectSalaryAdvanceRequestController)
+router.post('/api/salaryadvance/disburse', tenantResolver, require('../Controllers/salaryAdvanceController').disburseSalaryAdvanceRequestController)
+
+//Payroll Generator & Payslips
+router.get('/api/payroll/auto-run-config', tenantResolver, require('../Controllers/payrollController').getAutoRunConfigController)
+router.get('/api/payroll/preflight-checks', tenantResolver, require('../Controllers/payrollController').getPreflightChecksController)
+router.post('/api/payroll/run', tenantResolver, require('../Controllers/payrollController').runPayrollController)
+router.get('/api/payroll/runs', tenantResolver, require('../Controllers/payrollController').getPayrollRunsController)
+router.get('/api/payroll/run/:runId', tenantResolver, require('../Controllers/payrollController').getPayrollRunDetailsController)
+router.get('/api/payroll/payslip/:payslipId', tenantResolver, require('../Controllers/payrollController').getPayslipDetailsController)
+router.get('/api/payroll/payslips', tenantResolver, require('../Controllers/payrollController').getPayslipsController)
+router.get('/api/payroll/ctc-report', tenantResolver, require('../Controllers/payrollController').getCtcReportController)
+
+// Payroll Preflight Deep-Dive Inspection Endpoints
+router.get('/api/payroll/inspect/attendance-lop', tenantResolver, require('../Controllers/payrollController').getLopAttendanceInspectionController)
+router.get('/api/payroll/inspect/overtime', tenantResolver, require('../Controllers/payrollController').getOvertimeInspectionController)
+router.get('/api/payroll/inspect/advances', tenantResolver, require('../Controllers/payrollController').getAdvanceInspectionController)
 
 module.exports = router;

@@ -89,7 +89,6 @@ ORDER BY mm.display_order, sm.display_order
 
 async function loadMenuMapping(req) {
     const { type, code } = req.query
-    console.log(`Loading menu mapping for ${type} with code ${code}`)
     const request = req.tenantDB.request()
     request.input('code', sql.VarChar, code)
 

@@ -1,4 +1,4 @@
-const { getUserProfileRepository, updateUserProfileRepository } = require("../Repositories/UserProfile/userProfileRepo")
+const { getUserProfileRepository, updateUserProfileRepository, changePasswordRepository } = require("../Repositories/UserProfile/userProfileRepo")
 
 async function getUserProfileController(req, res) {
     try {
@@ -32,4 +32,17 @@ async function updateUserProfileController(req, res) {
     }
 }
 
-module.exports = { getUserProfileController, updateUserProfileController }
+async function changePasswordController(req, res) {
+    try {
+        const result = await changePasswordRepository(req)
+        return res.status(200).json(result)
+    } catch (error) {
+        console.error("Error in changePasswordController:", error)
+        return res.status(400).json({
+            success: false,
+            message: error.message || "Failed to change password"
+        })
+    }
+}
+
+module.exports = { getUserProfileController, updateUserProfileController, changePasswordController }
