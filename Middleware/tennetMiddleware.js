@@ -28,9 +28,12 @@ async function tenantResolver(req, res, next) {
 
         next()
     } catch (err) {
+        const isExpired = err.name === 'TokenExpiredError' || (err.message && err.message.toLowerCase().includes('expired'));
         return res.status(401).json({
-            message: "Invalid or expired token",
-            error: err.message
+            success: false,
+            message: isExpired ? "Your session has expired. Please log in again." : "Invalid or expired token",
+            isExpired,
+            error: err.name || err.message
         })
     }
 }

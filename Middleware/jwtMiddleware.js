@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken")
 const SECRET = process.env.JWT_SECRET
 
 function generateJWT(data) {
-    return jwt.sign(data, SECRET, { expiresIn: "8h" })
+    return jwt.sign(data, SECRET, { expiresIn: "1h" })
 }
 
 function validateJWT(token) {

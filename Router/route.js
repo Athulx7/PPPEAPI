@@ -7,6 +7,13 @@ const { getUploadMastersController, downloadTemplateController, uploadFileContro
 } = require('../Controllers/uploadData/dataUploadController')
 
 router.post('/api/login', require('../Controllers/login/authController').login)
+router.post('/api/auth/refresh-token', tenantResolver, require('../Controllers/login/authController').refreshTokenController)
+
+// Dashboard Data APIs
+router.get('/api/dashboard/admin', tenantResolver, require('../Controllers/dashboardController').getAdminDashboardController)
+router.get('/api/dashboard/hr', tenantResolver, require('../Controllers/dashboardController').getHrDashboardController)
+router.get('/api/dashboard/payroll', tenantResolver, require('../Controllers/dashboardController').getPayrollDashboardController)
+router.get('/api/dashboard/employee', tenantResolver, require('../Controllers/dashboardController').getEmployeeDashboardController)
 
 router.get('/api/side-menu', tenantResolver, require('../Controllers/menuitems/menuItemsController').MenuitemsController)
 router.get('/api/mainMenu', tenantResolver, require('../Controllers/menuitems/menuItemsController').getMainMenuDataController)

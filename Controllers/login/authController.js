@@ -131,4 +131,45 @@ async function login(req, res) {
         });
     }
 }
-module.exports = { login };
+
+async function refreshTokenController(req, res) {
+    try {
+        const claims = req.user;
+        if (!claims) {
+            return res.status(401).json({
+                success: false,
+                message: "No active session found to refresh",
+                isExpired: true
+            });
+        }
+
+        const tokenPayload = {
+            user_id: claims.user_id,
+            user_code: claims.user_code,
+            email: claims.email,
+            role_code: claims.role_code,
+            role_name: claims.role_name,
+            company_code: claims.company_code,
+            company_name: claims.company_name,
+            db_name: claims.db_name
+        };
+
+        const newToken = generateJWT(tokenPayload);
+
+        return res.status(200).json({
+            success: true,
+            message: "Session token refreshed successfully",
+            token: newToken,
+            expiresIn: "1h"
+        });
+    } catch (err) {
+        console.error("refreshTokenController error:", err);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to refresh session token",
+            error: err.message
+        });
+    }
+}
+
+module.exports = { login, refreshTokenController };
