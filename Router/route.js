@@ -228,4 +228,19 @@ router.get('/api/payroll/inspect/attendance-lop', tenantResolver, require('../Co
 router.get('/api/payroll/inspect/overtime', tenantResolver, require('../Controllers/payrollController').getOvertimeInspectionController)
 router.get('/api/payroll/inspect/advances', tenantResolver, require('../Controllers/payrollController').getAdvanceInspectionController)
 
+// ==========================================
+// SYSTEM ADMIN (SUPER ADMIN) ROUTES
+// ==========================================
+const { systemAuthMiddleware } = require('../Middleware/systemAuthMiddleware');
+const systemAdminCtrl = require('../Controllers/systemAdminController');
+
+router.post('/api/system/login', systemAdminCtrl.loginController);
+router.get('/api/system/metrics', systemAuthMiddleware, systemAdminCtrl.getMetricsController);
+router.get('/api/system/clients', systemAuthMiddleware, systemAdminCtrl.getClientsController);
+router.get('/api/system/template-config', systemAuthMiddleware, systemAdminCtrl.getTemplateConfigController);
+router.post('/api/system/clients', systemAuthMiddleware, systemAdminCtrl.createClientController);
+router.put('/api/system/clients/:company_code/renew', systemAuthMiddleware, systemAdminCtrl.renewClientController);
+router.put('/api/system/clients/:company_code/status', systemAuthMiddleware, systemAdminCtrl.updateStatusController);
+router.post('/api/system/template/backup', systemAuthMiddleware, systemAdminCtrl.triggerBackupTemplateController);
+
 module.exports = router;

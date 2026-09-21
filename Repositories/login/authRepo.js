@@ -6,7 +6,7 @@ async function getCompany(company_code) {
 
     const result = await request.query(`
         SELECT *
-        FROM tbl_companies
+        FROM [PPP_AdminDB].[dbo].[tbl_companies]
         WHERE company_code = @company_code
           AND active = 1
     `);
@@ -29,8 +29,8 @@ async function getUserByEmail(email, company_code) {
             u.role_code,
             u.is_active,
             r.role_name
-        FROM tbl_global_users u
-        LEFT JOIN tbl_roles r ON u.role_code = r.role_code
+        FROM [PPP_AdminDB].[dbo].[tbl_global_users] u
+        LEFT JOIN [PPP_AdminDB].[dbo].[tbl_roles] r ON u.role_code = r.role_code
         WHERE u.email = @email
           AND u.company_code = @company_code
     `);
